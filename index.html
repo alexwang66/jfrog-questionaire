@@ -78,7 +78,7 @@ tailwind.config = {
   </div>
 </div>
 
-<main class="max-w-3xl mx-auto px-4 py-8 pb-16">
+<main class="max-w-3xl mx-auto px-4 pt-28 pb-16">
 
 <!-- ───────────────── STEP 1 — Company Info ───────────────── -->
 <div class="step active" id="step1">
@@ -93,7 +93,9 @@ tailwind.config = {
       <div>
         <label class="block text-sm font-semibold text-gray-700 mb-1">Company Name <span class="text-red-500">*</span></label>
         <input id="companyName" type="text" placeholder="e.g. Acme Corp"
-          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm">
+          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm"
+          oninput="clearFieldErr('companyNameErr')">
+        <p id="companyNameErr" class="hidden mt-1 text-xs text-red-500"></p>
       </div>
       <div>
         <label class="block text-sm font-semibold text-gray-700 mb-1">Industry</label>
@@ -665,13 +667,39 @@ function validateEmailField() {
   return true;
 }
 
+// ── Field error helpers ───────────────────────────────────────────────────────
+function showFieldErr(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function clearFieldErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('hidden');
+}
+
 // ── Navigation ────────────────────────────────────────────────────────────────
 function nextStep(from) {
   if (from === 1) {
-    if (!document.getElementById('companyName').value.trim()) { alert('Company name is required.'); return; }
+    const name = document.getElementById('companyName').value.trim();
+    if (!name) {
+      showFieldErr('companyNameErr', 'Company name is required.');
+      document.getElementById('companyName').focus();
+      return;
+    }
+    clearFieldErr('companyNameErr');
     const email = document.getElementById('contactEmail').value.trim();
-    if (!email) { alert('Contact email is required.'); document.getElementById('contactEmail').focus(); return; }
-    if (!validateEmailField()) { document.getElementById('contactEmail').focus(); return; }
+    if (!email) {
+      showFieldErr('emailErr', 'Contact email is required.');
+      document.getElementById('contactEmail').focus();
+      return;
+    }
+    if (!validateEmailField()) {
+      document.getElementById('contactEmail').focus();
+      return;
+    }
   }
   show(from + 1);
 }
