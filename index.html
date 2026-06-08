@@ -68,40 +68,6 @@ tailwind.config = {
 
 <main class="max-w-3xl mx-auto px-4 py-8 pb-16">
 
-<!-- ───────────────── Setup Modal ───────────────── -->
-<div id="setupModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7">
-    <div class="flex items-center gap-3 mb-5">
-      <div class="w-9 h-9 bg-jfrog-green rounded-lg flex items-center justify-center flex-shrink-0">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      </div>
-      <div>
-        <div class="font-bold text-gray-800">Setup</div>
-        <div class="text-xs text-gray-500">Configure where responses are saved</div>
-      </div>
-    </div>
-    <div class="space-y-4">
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">GitHub Personal Access Token <span class="text-red-500">*</span></label>
-        <input id="setupToken" type="password" placeholder="ghp_xxxxxxxxxxxx"
-          class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
-        <p class="text-xs text-gray-400 mt-1">Requires <code class="bg-gray-100 px-1 rounded">issues: write</code> on the target repo. <a href="https://github.com/settings/tokens/new" target="_blank" class="text-jfrog-green hover:underline">Create token →</a></p>
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">GitHub Repository (owner/repo) <span class="text-red-500">*</span></label>
-        <input id="setupRepo" type="text" placeholder="alexwang66/jfrog-questionaire"
-          class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
-      </div>
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700">
-        ⚠️ Token is stored only in your browser's localStorage and never sent to third-party servers.
-      </div>
-      <div id="setupErr" class="hidden bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700"></div>
-      <button onclick="saveSetup()" class="w-full bg-jfrog-green text-white rounded-lg py-2.5 font-semibold text-sm hover:bg-green-600 transition-colors">Save & Start</button>
-      <button onclick="skipSetup()" class="w-full text-gray-400 text-xs hover:text-gray-600 transition-colors">Skip for now (responses won't be saved automatically)</button>
-    </div>
-  </div>
-</div>
-
 <!-- ───────────────── STEP 1 — Company Info ───────────────── -->
 <div class="step active" id="step1">
   <div class="mb-7">
@@ -472,54 +438,46 @@ tailwind.config = {
 
   <!-- Save -->
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-    <h3 class="font-semibold text-gray-800 mb-4">Save & Share Results</h3>
+    <h3 class="font-semibold text-gray-800 mb-1">Save & Share Results</h3>
+    <p class="text-xs text-gray-400 mb-4">No account or login required.</p>
     <div class="flex flex-col sm:flex-row gap-3">
-      <button onclick="submitToGitHub()" id="ghBtn"
+      <!-- Copy -->
+      <button onclick="copyResults()" id="copyBtn"
         class="flex-1 bg-jfrog-green text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        Save to GitHub Issues
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+        Copy Summary
       </button>
+      <!-- Email -->
+      <button onclick="sendEmail()"
+        class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Send via Email
+      </button>
+      <!-- Download -->
       <button onclick="downloadJSON()"
         class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         Download JSON
       </button>
+      <!-- New -->
       <button onclick="location.reload()"
-        class="border border-gray-200 text-gray-400 px-5 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+        class="border border-gray-200 text-gray-400 px-4 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         New
       </button>
     </div>
-    <div id="ghStatus" class="mt-3 hidden"></div>
+    <div id="copyStatus" class="mt-3 hidden"></div>
   </div>
 </div>
 
 </main>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────────────────────
 let step = 1;
 let data = {};
-let ghCfg = { token:'', repo:'' };
 
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('jfrog_gh_cfg');
-  if (saved) { ghCfg = JSON.parse(saved); document.getElementById('setupModal').style.display='none'; }
-  syncProgress();
-});
-
-// ── Setup ─────────────────────────────────────────────────────────────────────
-function saveSetup() {
-  const t = document.getElementById('setupToken').value.trim();
-  const r = document.getElementById('setupRepo').value.trim();
-  const err = document.getElementById('setupErr');
-  if (!t || !r) { err.textContent='Both fields are required.'; err.classList.remove('hidden'); return; }
-  if (!r.includes('/')) { err.textContent='Repo must be owner/repo format.'; err.classList.remove('hidden'); return; }
-  ghCfg = { token:t, repo:r };
-  localStorage.setItem('jfrog_gh_cfg', JSON.stringify(ghCfg));
-  document.getElementById('setupModal').style.display='none';
-}
-function skipSetup() { document.getElementById('setupModal').style.display='none'; }
+window.addEventListener('DOMContentLoaded', () => { syncProgress(); });
 
 // ── Navigation ────────────────────────────────────────────────────────────────
 function nextStep(from) {
@@ -721,139 +679,98 @@ function generateResults() {
   show(5);
 }
 
-// ── GitHub Issues ─────────────────────────────────────────────────────────────
-async function submitToGitHub() {
-  if (!ghCfg.token || !ghCfg.repo) { document.getElementById('setupModal').style.display='flex'; return; }
-  const btn = document.getElementById('ghBtn');
-  const statusEl = document.getElementById('ghStatus');
-  btn.disabled = true; btn.textContent = 'Saving…';
-  statusEl.classList.remove('hidden');
-  statusEl.innerHTML = '<div class="text-sm text-gray-400">Creating GitHub Issue…</div>';
-
+// ── Build plain-text summary ──────────────────────────────────────────────────
+function buildSummary() {
   const d = data;
   const recs = d.recommendations || [];
-  const highRecs = recs.filter(r=>r.priority==='high').map(r=>r.product).join(', ') || 'None';
   const overallScore = Math.round(recs.reduce((a,r)=>a+r.s,0)/Math.max(recs.length,1));
+  const hi = recs.filter(r=>r.priority==='high').map(r=>r.product).join(', ') || 'None';
+  const med = recs.filter(r=>r.priority==='medium').map(r=>r.product).join(', ') || 'None';
+  return `JFrog New Customer Questionnaire
+Submitted: ${new Date(d.submittedAt).toLocaleString()}
+${'─'.repeat(50)}
 
-  const body = `## JFrog New Customer Questionnaire
+COMPANY
+  Name        : ${d.company.name}
+  Industry    : ${d.company.industry || '—'}
+  Contact     : ${d.company.contactName} <${d.company.contactEmail}>
 
-> Auto-generated by JFrog Customer Questionnaire · ${new Date(d.submittedAt).toLocaleString()}
+Q1 — DATA CENTER LOCATIONS
+  Regions     : ${d.infrastructure.dataCenterRegions.join(', ') || '—'}
+  Other       : ${d.infrastructure.dataCenterOther || '—'}
+  Deployment  : ${d.infrastructure.deploymentType || '—'}
 
----
+Q2 — DEVELOPER COUNT
+  Range       : ${d.infrastructure.devCount || '—'}
+  Details     : ${d.infrastructure.devCountNote || '—'}
 
-### Company Information
-| Field | Value |
-|-------|-------|
-| Company | **${d.company.name}** |
-| Industry | ${d.company.industry || '—'} |
-| Contact | ${d.company.contactName} \`${d.company.contactEmail}\` |
+Q3 — STORAGE
+  Current     : ${d.infrastructure.storageCurrentGB || '—'}
+  Growth      : ${d.infrastructure.storageGrowth || '—'}
+  Existing    : ${d.infrastructure.existingTool || '—'}
 
----
+Q4 — SECURITY TOOLS
+  In use      : ${d.security.toolsInUse.join(', ') || 'None'}
+  Other       : ${d.security.toolsOther || '—'}
+  Compliance  : ${d.security.compliance || '—'}
 
-### Q1 — Data Center Locations
-**Regions:** ${d.infrastructure.dataCenterRegions.join(', ') || '—'}
-${d.infrastructure.dataCenterOther ? `**Additional details:** ${d.infrastructure.dataCenterOther}` : ''}
-**Deployment preference:** ${d.infrastructure.deploymentType || '—'}
+Q5 — PACKAGE TYPES
+  Current     : ${d.packages.currentTypes.join(', ') || '—'}
+  Planned     : ${d.packages.plannedTypes.join(', ') || '—'}
 
----
+Q6 — PAIN POINTS & OBJECTIVES
+  Pain Points : ${d.painPoints.pains.join(', ') || '—'}
+  Objectives  : ${d.painPoints.objectives.join(', ') || '—'}
+  Timeline    : ${d.painPoints.timeline || '—'}
+  Budget      : ${d.painPoints.budget || '—'}
+  Notes       : ${d.painPoints.freeText || '—'}
 
-### Q2 — Developer Count
-**Range:** ${d.infrastructure.devCount || '—'}
-${d.infrastructure.devCountNote ? `**Note:** ${d.infrastructure.devCountNote}` : ''}
+${'─'.repeat(50)}
+JFROG FIT SCORE: ${overallScore} / 100
 
----
+HIGH PRIORITY : ${hi}
+CONSIDER      : ${med}
 
-### Q3 — Storage Usage
-| Field | Value |
-|-------|-------|
-| Current storage | ${d.infrastructure.storageCurrentGB || '—'} |
-| Expected growth | ${d.infrastructure.storageGrowth || '—'} |
-| Existing tool | ${d.infrastructure.existingTool || 'None / Unknown'} |
+${recs.map(r=>`  [${r.priority.toUpperCase().padEnd(6)}] ${r.product} — ${r.s}/100\n             ${r.action}`).join('\n')}
+`;
+}
 
----
+// ── Copy to clipboard ─────────────────────────────────────────────────────────
+function copyResults() {
+  const text = buildSummary();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const status = document.getElementById('copyStatus');
+    btn.textContent = '✓ Copied!';
+    btn.classList.replace('bg-jfrog-green','bg-green-600');
+    status.classList.remove('hidden');
+    status.innerHTML = '<div class="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">✅ Summary copied to clipboard — paste it into email, CRM, or notes.</div>';
+    setTimeout(() => {
+      btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg> Copy Summary`;
+      btn.classList.replace('bg-green-600','bg-jfrog-green');
+    }, 3000);
+  }).catch(() => {
+    // Fallback: show a textarea for manual copy
+    const status = document.getElementById('copyStatus');
+    status.classList.remove('hidden');
+    status.innerHTML = `<textarea class="w-full border border-gray-200 rounded-lg p-2 text-xs font-mono h-32 resize-none" readonly onclick="this.select()">${buildSummary()}</textarea><p class="text-xs text-gray-400 mt-1">Select all and copy manually (Ctrl+A / Cmd+A).</p>`;
+  });
+}
 
-### Q4 — Security Tools
-**Tools in use:** ${d.security.toolsInUse.join(', ') || 'None'}
-${d.security.toolsOther ? `**Other:** ${d.security.toolsOther}` : ''}
-**Compliance requirements:** ${d.security.compliance || 'None stated'}
-
----
-
-### Q5 — Package Types
-**Currently in use:** ${d.packages.currentTypes.join(', ') || '—'}
-**Planned to add:** ${d.packages.plannedTypes.join(', ') || '—'}
-
----
-
-### Q6 — Pain Points & Objectives
-**Pain points:** ${d.painPoints.pains.join(', ') || '—'}
-**Objectives:** ${d.painPoints.objectives.join(', ') || '—'}
-**Timeline:** ${d.painPoints.timeline || '—'}
-**Budget:** ${d.painPoints.budget || '—'}
-${d.painPoints.freeText ? `**Additional notes:** ${d.painPoints.freeText}` : ''}
-
----
-
-## JFrog Fit Analysis
-
-**Overall Score: ${overallScore} / 100**
-
-### High Priority
-${highRecs}
-
-### Recommendations
-${recs.map(r=>`- **${r.product}** — Score ${r.s}/100 (${r.priority}) · ${r.desc.substring(0,80)}…`).join('\n')}
-
----
-
-<details>
-<summary>📊 Raw JSON Data</summary>
-
-\`\`\`json
-${JSON.stringify(d, null, 2)}
-\`\`\`
-
-</details>`;
-
-  const labels = ['new-customer', 'questionnaire'];
-  if (d.company.industry) labels.push(d.company.industry.split('/')[0].trim().toLowerCase().replace(/\s+/g,'-'));
-  if (recs.some(r=>r.priority==='high')) labels.push('high-priority');
-  if (d.infrastructure.deploymentType) labels.push(d.infrastructure.deploymentType.toLowerCase().replace(/\s+/g,'-'));
-
-  try {
-    const [owner, repo] = ghCfg.repo.split('/');
-    for (const label of labels) {
-      try {
-        const colors = { 'new-customer':'0075ca', 'questionnaire':'40BE46', 'high-priority':'e11d48' };
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/labels`, {
-          method:'POST', headers:{ Authorization:`token ${ghCfg.token}`, 'Content-Type':'application/json' },
-          body: JSON.stringify({ name:label, color: colors[label] || '6b7280' })
-        });
-      } catch {}
-    }
-
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
-      method:'POST',
-      headers:{ Authorization:`token ${ghCfg.token}`, 'Content-Type':'application/json', Accept:'application/vnd.github.v3+json' },
-      body: JSON.stringify({ title:`[Questionnaire] ${d.company.name} · Score ${overallScore} · ${new Date().toLocaleDateString()}`, body, labels })
-    });
-
-    if (!res.ok) { const e = await res.json(); throw new Error(e.message || `HTTP ${res.status}`); }
-    const issue = await res.json();
-    btn.textContent = '✓ Saved'; btn.className = 'flex-1 bg-green-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2';
-    statusEl.innerHTML = `<div class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">✅ Saved as <a href="${issue.html_url}" target="_blank" class="underline font-medium">Issue #${issue.number}</a></div>`;
-  } catch(e) {
-    btn.disabled=false; btn.textContent='Save to GitHub Issues';
-    btn.className='flex-1 bg-jfrog-green text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2';
-    statusEl.innerHTML = `<div class="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">❌ Failed: ${e.message}</div>`;
-  }
+// ── Send via Email (mailto) ───────────────────────────────────────────────────
+function sendEmail() {
+  const d = data;
+  const recs = d.recommendations || [];
+  const overallScore = Math.round(recs.reduce((a,r)=>a+r.s,0)/Math.max(recs.length,1));
+  const subject = encodeURIComponent(`JFrog Questionnaire — ${d.company.name}`);
+  const body = encodeURIComponent(buildSummary());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
 }
 
 // ── Download JSON ─────────────────────────────────────────────────────────────
 function downloadJSON() {
-  const json = JSON.stringify(data, null, 2);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([json], {type:'application/json'}));
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type:'application/json'}));
   a.download = `jfrog-questionnaire-${(data.company?.name||'unknown').replace(/\s+/g,'-')}-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
