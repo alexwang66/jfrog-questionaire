@@ -924,7 +924,7 @@ function score(d) {
     const hasNexus = pains.includes('Migrating from Nexus / other tool') || existingStr.includes('nexus');
     if (hasNexus) { s += 7; why.push('Migration from Nexus — JFrog offers a proven migration path and import tool'); }
     if (existingTools.length > 1) { s += 5; why.push(`${existingTools.length} disparate repository tools — consolidating onto one platform reduces maintenance overhead`); }
-    const migAction = hasNexus ? 'Use JFrog's free Nexus migration tool for a zero-downtime cut-over.' : 'Start with a PoC covering your top 3 package types.';
+    const migAction = hasNexus ? "Use JFrog's free Nexus migration tool for a zero-downtime cut-over." : 'Start with a PoC covering your top 3 package types.';
     recs.push({ product:'JFrog Artifactory', cat:'Universal Artifact Repository', icon:'📦', s: Math.min(100,s), priority:'high', desc:'Universal binary repository supporting 30+ package types. Single source of truth for all artifacts — from development to production.', why, action: migAction });
   }
 
