@@ -45,6 +45,8 @@ tailwind.config = {
   .dc-chip button:hover { color:#ef4444; }
   #dcSuggestList span { cursor:pointer; font-size:12px; background:#f3f4f6; color:#374151; border-radius:20px; padding:3px 10px; }
   #dcSuggestList span:hover { background:#e8f5e9; color:#2e7d32; }
+  .qk { font-size:11px; border:1px dashed #d1d5db; color:#6b7280; padding:3px 10px; border-radius:20px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .qk:hover { border-color:#40BE46; color:#40BE46; }
 </style>
 </head>
 <body>
@@ -171,24 +173,65 @@ tailwind.config = {
         <div id="dcSuggestList" class="p-2 flex flex-wrap gap-1.5"></div>
       </div>
 
-      <!-- Quick-add common cities -->
-      <div class="mt-3">
-        <div class="text-xs text-gray-400 mb-2">Quick add:</div>
-        <div class="flex flex-wrap gap-1.5">
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Tokyo')">+ Tokyo</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Osaka')">+ Osaka</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Seoul')">+ Seoul</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Taipei')">+ Taipei</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Singapore')">+ Singapore</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Hong Kong')">+ Hong Kong</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Shanghai')">+ Shanghai</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Beijing')">+ Beijing</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('New York')">+ New York</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Virginia')">+ Virginia</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Frankfurt')">+ Frankfurt</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('London')">+ London</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Mumbai')">+ Mumbai</span>
-          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Sydney')">+ Sydney</span>
+      <!-- Quick-add — grouped by region -->
+      <div class="mt-3 space-y-2">
+        <div class="text-xs text-gray-400">Quick add:</div>
+
+        <!-- China Tier-1 -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs text-gray-400 w-16 flex-shrink-0">🇨🇳 T1</span>
+          <span class="qk" onclick="addDcTag('Beijing')">+ 北京 Beijing</span>
+          <span class="qk" onclick="addDcTag('Shanghai')">+ 上海 Shanghai</span>
+          <span class="qk" onclick="addDcTag('Guangzhou')">+ 广州 Guangzhou</span>
+          <span class="qk" onclick="addDcTag('Shenzhen')">+ 深圳 Shenzhen</span>
+        </div>
+
+        <!-- China Tier-2 -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs text-gray-400 w-16 flex-shrink-0">🇨🇳 T2</span>
+          <span class="qk" onclick="addDcTag('Chengdu')">+ 成都 Chengdu</span>
+          <span class="qk" onclick="addDcTag('Hangzhou')">+ 杭州 Hangzhou</span>
+          <span class="qk" onclick="addDcTag('Wuhan')">+ 武汉 Wuhan</span>
+          <span class="qk" onclick="addDcTag("Xi'an")">+ 西安 Xi'an</span>
+          <span class="qk" onclick="addDcTag('Nanjing')">+ 南京 Nanjing</span>
+          <span class="qk" onclick="addDcTag('Chongqing')">+ 重庆 Chongqing</span>
+          <span class="qk" onclick="addDcTag('Tianjin')">+ 天津 Tianjin</span>
+          <span class="qk" onclick="addDcTag('Suzhou')">+ 苏州 Suzhou</span>
+          <span class="qk" onclick="addDcTag('Zhengzhou')">+ 郑州 Zhengzhou</span>
+          <span class="qk" onclick="addDcTag('Changsha')">+ 长沙 Changsha</span>
+          <span class="qk" onclick="addDcTag('Qingdao')">+ 青岛 Qingdao</span>
+          <span class="qk" onclick="addDcTag('Ningbo')">+ 宁波 Ningbo</span>
+          <span class="qk" onclick="addDcTag('Xiamen')">+ 厦门 Xiamen</span>
+          <span class="qk" onclick="addDcTag('Dalian')">+ 大连 Dalian</span>
+          <span class="qk" onclick="addDcTag('Wuxi')">+ 无锡 Wuxi</span>
+          <span class="qk" onclick="addDcTag('Hefei')">+ 合肥 Hefei</span>
+          <span class="qk" onclick="addDcTag('Fuzhou')">+ 福州 Fuzhou</span>
+          <span class="qk" onclick="addDcTag('Kunming')">+ 昆明 Kunming</span>
+          <span class="qk" onclick="addDcTag('Harbin')">+ 哈尔滨 Harbin</span>
+          <span class="qk" onclick="addDcTag('Shenyang')">+ 沈阳 Shenyang</span>
+        </div>
+
+        <!-- Asia Pacific -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs text-gray-400 w-16 flex-shrink-0">🌏 APAC</span>
+          <span class="qk" onclick="addDcTag('Hong Kong')">+ Hong Kong</span>
+          <span class="qk" onclick="addDcTag('Taipei')">+ Taipei</span>
+          <span class="qk" onclick="addDcTag('Tokyo')">+ Tokyo</span>
+          <span class="qk" onclick="addDcTag('Osaka')">+ Osaka</span>
+          <span class="qk" onclick="addDcTag('Seoul')">+ Seoul</span>
+          <span class="qk" onclick="addDcTag('Singapore')">+ Singapore</span>
+          <span class="qk" onclick="addDcTag('Sydney')">+ Sydney</span>
+          <span class="qk" onclick="addDcTag('Mumbai')">+ Mumbai</span>
+        </div>
+
+        <!-- Americas + Europe -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs text-gray-400 w-16 flex-shrink-0">🌍 Other</span>
+          <span class="qk" onclick="addDcTag('Virginia')">+ Virginia</span>
+          <span class="qk" onclick="addDcTag('Oregon')">+ Oregon</span>
+          <span class="qk" onclick="addDcTag('Frankfurt')">+ Frankfurt</span>
+          <span class="qk" onclick="addDcTag('London')">+ London</span>
+          <span class="qk" onclick="addDcTag('Paris')">+ Paris</span>
         </div>
       </div>
     </div>
@@ -530,17 +573,33 @@ function getSelectedPills(id) {
 
 // ── Data Center Tag Input ─────────────────────────────────────────────────────
 const DC_SUGGESTIONS = [
-  'Tokyo','Osaka','Nagoya','Fukuoka','Sapporo',
-  'Seoul','Busan',
-  'Taipei','Taichung','Kaohsiung',
-  'Singapore',
-  'Hong Kong',
-  'Shanghai','Beijing','Shenzhen','Guangzhou','Chengdu','Hangzhou',
-  'Mumbai','Bangalore','Hyderabad','Chennai','Delhi',
-  'Sydney','Melbourne',
-  'New York','Virginia','Ohio','Oregon','California',
-  'London','Frankfurt','Paris','Amsterdam','Dublin','Stockholm',
-  'São Paulo','Toronto','Dubai','Johannesburg'
+  // China Tier-1
+  'Beijing','Shanghai','Guangzhou','Shenzhen',
+  // China Tier-2
+  'Chengdu','Hangzhou','Wuhan',"Xi'an",'Nanjing','Chongqing','Tianjin','Suzhou',
+  'Zhengzhou','Changsha','Qingdao','Ningbo','Xiamen','Dalian','Wuxi','Hefei',
+  'Fuzhou','Kunming','Harbin','Shenyang','Ji\'nan','Nanchang','Changchun',
+  'Guiyang','Taiyuan','Shijiazhuang','Urumqi','Lanzhou','Haikou','Yinchuan',
+  // China other
+  'Hong Kong','Macau',
+  // Taiwan
+  'Taipei','Taichung','Kaohsiung','Tainan',
+  // Japan
+  'Tokyo','Osaka','Nagoya','Fukuoka','Sapporo','Yokohama','Kobe','Kyoto',
+  // Korea
+  'Seoul','Busan','Incheon','Daegu',
+  // Southeast Asia
+  'Singapore','Kuala Lumpur','Bangkok','Jakarta','Ho Chi Minh City','Manila',
+  // South Asia
+  'Mumbai','Delhi','Bangalore','Hyderabad','Chennai','Pune','Kolkata',
+  // Oceania
+  'Sydney','Melbourne','Auckland',
+  // Americas
+  'Virginia','Ohio','Oregon','California','New York','Texas','Toronto','São Paulo',
+  // Europe
+  'Frankfurt','London','Paris','Amsterdam','Dublin','Stockholm','Madrid','Milan','Warsaw','Zurich',
+  // Middle East / Africa
+  'Dubai','Abu Dhabi','Riyadh','Johannesburg'
 ];
 
 function addDcTag(value) {
