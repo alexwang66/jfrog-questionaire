@@ -1242,14 +1242,45 @@ function buildSecurePayload(baseData) {
   };
 }
 
+// ── Client-side rate-limit guard ──────────────────────────────────────────────
+const RATE_LIMIT_MS = 10 * 60 * 1000;  // 10 minutes, mirrors server setting
+
+function getRateLimitKey(email) {
+  return 'jfrog_sub_' + (email || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+}
+
+// Returns remaining cooldown in seconds, or 0 if allowed
+function checkRateLimit(email) {
+  if (!email) return 0;
+  const ts = Number(localStorage.getItem(getRateLimitKey(email))) || 0;
+  const elapsed = Date.now() - ts;
+  return elapsed < RATE_LIMIT_MS ? Math.ceil((RATE_LIMIT_MS - elapsed) / 1000) : 0;
+}
+
+function markSubmitted(email) {
+  if (email) localStorage.setItem(getRateLimitKey(email), String(Date.now()));
+}
+
+function fmtWait(secs) {
+  const m = Math.floor(secs / 60), s = secs % 60;
+  return m > 0 ? `${m} min ${s} sec` : `${s} sec`;
+}
+
 // ── Auto-submit (called by generateResults) ───────────────────────────────────
 async function autoSubmitToSheets() {
   const url = localStorage.getItem(GS_KEY);
   if (!url) {
-    // No endpoint configured — show a neutral confirmation to customer
     setSubmitBanner('none', 'Thank you! Your assessment is complete. Use the options below to save a copy.');
     return;
   }
+
+  const email = data.company?.contactEmail || '';
+  const wait  = checkRateLimit(email);
+  if (wait > 0) {
+    setSubmitBanner('error', `This email has already been submitted. Please wait ${fmtWait(wait)} before resubmitting.`);
+    return;
+  }
+
   setSubmitBanner('loading', 'Submitting your response…');
   try {
     await fetch(url, {
@@ -1258,6 +1289,7 @@ async function autoSubmitToSheets() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(buildSecurePayload(data))
     });
+    markSubmitted(email);
     setSubmitBanner('success', 'Your response has been submitted successfully. Thank you!');
   } catch (err) {
     setSubmitBanner('error', 'Submission failed — please use "Copy Summary" or "Download JSON" to save your results.');
@@ -1284,6 +1316,14 @@ async function submitToSheets() {
     showSheetsMsg('info', 'ℹ️ Enter your Apps Script URL above first.');
     return;
   }
+
+  const email = data.company?.contactEmail || '';
+  const wait  = checkRateLimit(email);
+  if (wait > 0) {
+    showSheetsMsg('error', `⚠️ Already submitted. Please wait ${fmtWait(wait)} before saving again.`);
+    return;
+  }
+
   const btn = document.getElementById('gsSaveBtn');
   btn.disabled = true;
   btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Saving…`;
@@ -1295,6 +1335,7 @@ async function submitToSheets() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(buildSecurePayload(data))
     });
+    markSubmitted(email);
     showSheetsMsg('success', '✅ Saved to Google Sheets.');
     btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Saved ✓`;
     btn.classList.replace('bg-jfrog-green', 'bg-green-700');
