@@ -4,26 +4,20 @@
  * Setup steps:
  *  1. Create a new Google Sheet
  *  2. Extensions → Apps Script → paste this file → Save
- *  3. Change SUBMIT_TOKEN below to your own secret string
- *  4. Deploy → New deployment → Web App
+ *  3. Deploy → New deployment → Web App
  *       Execute as: Me
  *       Who has access: Anyone
- *  5. Copy the Web App URL and paste it into the questionnaire SE Tools panel
- *  6. Paste the same token value into the SE Tools "Submit Token" field
+ *  4. Copy the Web App URL and paste it into the questionnaire SE Tools panel
  *
  * Each questionnaire submission appends one row to the active sheet.
  */
 
 // ── Anti-abuse config ──────────────────────────────────────────────────────────
-// Change this to any secret string you like. Must match the token configured
-// in the SE Tools panel of the questionnaire form.
-const SUBMIT_TOKEN   = 'jfrog-se-2026';   // ← change before deploying
-
 // Minimum seconds a user must spend on the form (blocks instant bot submissions)
 const MIN_DURATION_S = 10;
 
 // How long (seconds) to block re-submissions from the same email address
-const RATE_LIMIT_S   = 600;  // 10 minutes
+const RATE_LIMIT_S = 600;  // 10 minutes
 
 const SHEET_NAME = 'Responses';
 
@@ -39,34 +33,28 @@ function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
 
-    // 1. Token validation ──────────────────────────────────────────────────────
-    if (!d.token || d.token !== SUBMIT_TOKEN) {
-      return json({ status: 'rejected', reason: 'invalid token' });
-    }
-
-    // 2. Minimum form-fill duration ───────────────────────────────────────────
+    // 1. Minimum form-fill duration ───────────────────────────────────────────
     const duration = Number(d.durationSeconds) || 0;
     if (duration < MIN_DURATION_S) {
       return json({ status: 'rejected', reason: 'form submitted too quickly' });
     }
 
-    // 3. Required fields ───────────────────────────────────────────────────────
+    // 2. Required fields ───────────────────────────────────────────────────────
     const name  = d.company?.name?.trim();
     const email = d.company?.contactEmail?.trim();
     if (!name || !email || !email.includes('@')) {
       return json({ status: 'rejected', reason: 'missing required fields' });
     }
 
-    // 4. Rate limiting by email (one submission per 10 minutes) ───────────────
+    // 3. Rate limiting by email (one submission per 10 minutes) ───────────────
     const cache    = CacheService.getScriptCache();
     const cacheKey = 'sub_' + email.toLowerCase().replace(/[^a-z0-9]/g, '_');
     if (cache.get(cacheKey)) {
       return json({ status: 'rejected', reason: 'duplicate submission — please wait before resubmitting' });
     }
-    // Mark this email as submitted; key expires after RATE_LIMIT_S seconds
     cache.put(cacheKey, '1', RATE_LIMIT_S);
 
-    // 5. Write to Sheet ────────────────────────────────────────────────────────
+    // 4. Write to Sheet ────────────────────────────────────────────────────────
     const ss    = SpreadsheetApp.getActiveSpreadsheet();
     let   sheet = ss.getSheetByName(SHEET_NAME);
 
