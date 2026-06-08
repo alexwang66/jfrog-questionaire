@@ -40,9 +40,11 @@ tailwind.config = {
   textarea:focus, input[type=text]:focus, input[type=email]:focus, input[type=number]:focus, select:focus {
     border-color:#40BE46 !important; box-shadow:0 0 0 3px rgba(64,190,70,.15);
   }
-  .dc-tag { display:inline-flex; align-items:center; gap:4px; background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7; border-radius:20px; padding:3px 10px; font-size:12px; }
-  .dc-tag button { background:none; border:none; cursor:pointer; color:#666; font-size:14px; line-height:1; padding:0 0 0 2px; }
-  .dc-tag button:hover { color:#ef4444; }
+  .dc-chip { display:inline-flex; align-items:center; gap:4px; background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7; border-radius:20px; padding:3px 8px 3px 10px; font-size:12px; font-weight:500; white-space:nowrap; }
+  .dc-chip button { background:none; border:none; cursor:pointer; color:#66bb6a; font-size:15px; line-height:1; padding:0; display:flex; align-items:center; }
+  .dc-chip button:hover { color:#ef4444; }
+  #dcSuggestList span { cursor:pointer; font-size:12px; background:#f3f4f6; color:#374151; border-radius:20px; padding:3px 10px; }
+  #dcSuggestList span:hover { background:#e8f5e9; color:#2e7d32; }
 </style>
 </head>
 <body>
@@ -150,24 +152,45 @@ tailwind.config = {
     <!-- Q1: Data Center Locations -->
     <div>
       <label class="block text-sm font-semibold text-gray-800 mb-0.5">Where are your data centers located?</label>
-      <p class="text-xs text-gray-400 mb-3">e.g. "We operate two data centers (Tokyo and the United States)."</p>
-      <div class="mb-3">
-        <div class="text-xs font-medium text-gray-500 mb-2">Select all that apply:</div>
-        <div class="flex flex-wrap gap-2" id="dcRegions">
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇺🇸 US (East)</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇺🇸 US (West)</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇪🇺 Europe</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇯🇵 Japan</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇸🇬 Singapore</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇹🇼 Taiwan</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇰🇷 Korea</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇨🇳 China (Mainland)</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇮🇳 India</span>
-          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">🇦🇺 Australia</span>
+      <p class="text-xs text-gray-400 mb-3">Enter each data center city/site individually. e.g. "Tokyo, Osaka, New York"</p>
+
+      <!-- Tag input box -->
+      <div id="dcTagBox"
+        onclick="document.getElementById('dcInput').focus()"
+        class="min-h-[44px] w-full border border-gray-200 rounded-lg px-2 py-1.5 flex flex-wrap gap-1.5 cursor-text focus-within:border-jfrog-green focus-within:shadow-[0_0_0_3px_rgba(64,190,70,0.15)] transition-all">
+        <div id="dcTags" class="contents"></div>
+        <input id="dcInput" type="text"
+          placeholder="Type a city and press Enter…"
+          class="flex-1 min-w-[160px] border-0 outline-none text-sm bg-transparent py-0.5 px-1 placeholder-gray-300"
+          onkeydown="dcInputKey(event)"
+          oninput="dcShowSuggestions(this.value)">
+      </div>
+
+      <!-- Suggestions dropdown -->
+      <div id="dcSuggestBox" class="hidden mt-1 border border-gray-200 rounded-xl bg-white shadow-lg z-20 max-h-52 overflow-y-auto">
+        <div id="dcSuggestList" class="p-2 flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <!-- Quick-add common cities -->
+      <div class="mt-3">
+        <div class="text-xs text-gray-400 mb-2">Quick add:</div>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Tokyo')">+ Tokyo</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Osaka')">+ Osaka</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Seoul')">+ Seoul</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Taipei')">+ Taipei</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Singapore')">+ Singapore</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Hong Kong')">+ Hong Kong</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Shanghai')">+ Shanghai</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Beijing')">+ Beijing</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('New York')">+ New York</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Virginia')">+ Virginia</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Frankfurt')">+ Frankfurt</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('London')">+ London</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Mumbai')">+ Mumbai</span>
+          <span class="text-xs border border-dashed border-gray-300 text-gray-500 px-2.5 py-1 rounded-full cursor-pointer hover:border-jfrog-green hover:text-jfrog-green transition-colors" onclick="addDcTag('Sydney')">+ Sydney</span>
         </div>
       </div>
-      <input id="dcOther" type="text" placeholder="Other locations or details…"
-        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
     </div>
 
     <!-- Deployment Type -->
@@ -505,6 +528,83 @@ function getSelectedPills(id) {
   return c ? [...c.querySelectorAll('.pill.on')].map(p => p.textContent.trim()) : [];
 }
 
+// ── Data Center Tag Input ─────────────────────────────────────────────────────
+const DC_SUGGESTIONS = [
+  'Tokyo','Osaka','Nagoya','Fukuoka','Sapporo',
+  'Seoul','Busan',
+  'Taipei','Taichung','Kaohsiung',
+  'Singapore',
+  'Hong Kong',
+  'Shanghai','Beijing','Shenzhen','Guangzhou','Chengdu','Hangzhou',
+  'Mumbai','Bangalore','Hyderabad','Chennai','Delhi',
+  'Sydney','Melbourne',
+  'New York','Virginia','Ohio','Oregon','California',
+  'London','Frankfurt','Paris','Amsterdam','Dublin','Stockholm',
+  'São Paulo','Toronto','Dubai','Johannesburg'
+];
+
+function addDcTag(value) {
+  const v = value.trim();
+  if (!v) return;
+  // prevent duplicates (case-insensitive)
+  const existing = getDcTags().map(t => t.toLowerCase());
+  if (existing.includes(v.toLowerCase())) return;
+
+  const chip = document.createElement('span');
+  chip.className = 'dc-chip';
+  chip.dataset.value = v;
+  chip.innerHTML = `${v}<button type="button" onclick="removeDcTag(this)" title="Remove">×</button>`;
+  document.getElementById('dcTags').appendChild(chip);
+
+  const input = document.getElementById('dcInput');
+  input.value = '';
+  input.placeholder = 'Add another…';
+  hideDcSuggestions();
+}
+
+function removeDcTag(btn) {
+  btn.closest('.dc-chip').remove();
+  const tags = getDcTags();
+  if (tags.length === 0) document.getElementById('dcInput').placeholder = 'Type a city and press Enter…';
+}
+
+function getDcTags() {
+  return [...document.querySelectorAll('#dcTags .dc-chip')].map(c => c.dataset.value);
+}
+
+function dcInputKey(e) {
+  if (['Enter','Tab',','].includes(e.key)) {
+    e.preventDefault();
+    const v = e.target.value.trim().replace(/,$/, '');
+    if (v) addDcTag(v);
+  } else if (e.key === 'Backspace' && !e.target.value) {
+    const chips = document.querySelectorAll('#dcTags .dc-chip');
+    if (chips.length) chips[chips.length - 1].remove();
+  }
+}
+
+function dcShowSuggestions(q) {
+  const box = document.getElementById('dcSuggestBox');
+  const list = document.getElementById('dcSuggestList');
+  if (!q.trim()) { hideDcSuggestions(); return; }
+  const existing = getDcTags().map(t => t.toLowerCase());
+  const matches = DC_SUGGESTIONS.filter(s =>
+    s.toLowerCase().includes(q.toLowerCase()) && !existing.includes(s.toLowerCase())
+  ).slice(0, 12);
+  if (!matches.length) { hideDcSuggestions(); return; }
+  list.innerHTML = matches.map(m => `<span onclick="addDcTag('${m}')">${m}</span>`).join('');
+  box.classList.remove('hidden');
+}
+
+function hideDcSuggestions() {
+  document.getElementById('dcSuggestBox').classList.add('hidden');
+}
+
+// Close suggestions when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('#dcTagBox') && !e.target.closest('#dcSuggestBox')) hideDcSuggestions();
+});
+
 // ── Radio helper ──────────────────────────────────────────────────────────────
 function radioVal(name) { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; }
 
@@ -521,8 +621,7 @@ function collect() {
     infrastructure: {
       devCount: radioVal('devCount'),
       devCountNote: document.getElementById('devCountNote').value.trim(),
-      dataCenterRegions: getSelectedPills('dcRegions'),
-      dataCenterOther: document.getElementById('dcOther').value.trim(),
+      dataCenterSites: getDcTags(),
       deploymentType: radioVal('deployType'),
       storageCurrentGB: radioVal('storageNow'),
       storageGrowth: document.getElementById('storageGrowth').value,
@@ -552,7 +651,7 @@ function score(d) {
   const recs = [];
   const devCount = d.infrastructure.devCount;
   const storage = d.infrastructure.storageCurrentGB;
-  const regions = d.infrastructure.dataCenterRegions.length;
+  const regions = d.infrastructure.dataCenterSites.length;
   const deploy = d.infrastructure.deploymentType;
   const secTools = d.security.toolsInUse;
   const pkgs = d.packages.currentTypes;
@@ -627,7 +726,7 @@ function score(d) {
     if (regions >= 3 || (compliance && compliance.length > 10)) {
       plan = 'Enterprise+'; planDesc = 'Full platform access — all modules included. Best for enterprise-wide rollouts with advanced security and distribution needs.';
     }
-    recs.push({ product:`Recommended Plan: ${plan}`, cat:'License & Packaging', icon:'📋', s:70, priority:'medium', desc: planDesc, why:[`Based on: ${devCount || 'team size'} developers, ${storage || 'storage'}, ${regions} region(s)`], action:'Request a custom quote and ROI analysis for your specific usage profile.' });
+    recs.push({ product:`Recommended Plan: ${plan}`, cat:'License & Packaging', icon:'📋', s:70, priority:'medium', desc: planDesc, why:[`Based on: ${devCount || 'team size'} developers, ${storage || 'storage'}, ${regions} DC site(s)${d.infrastructure.dataCenterSites.length ? ': '+d.infrastructure.dataCenterSites.join(', ') : ''}`], action:'Request a custom quote and ROI analysis for your specific usage profile.' });
   }
 
   return recs.sort((a,b) => b.s - a.s);
@@ -696,8 +795,7 @@ COMPANY
   Contact     : ${d.company.contactName} <${d.company.contactEmail}>
 
 Q1 — DATA CENTER LOCATIONS
-  Regions     : ${d.infrastructure.dataCenterRegions.join(', ') || '—'}
-  Other       : ${d.infrastructure.dataCenterOther || '—'}
+  Sites       : ${d.infrastructure.dataCenterSites.join(', ') || '—'}
   Deployment  : ${d.infrastructure.deploymentType || '—'}
 
 Q2 — DEVELOPER COUNT
