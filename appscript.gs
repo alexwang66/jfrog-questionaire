@@ -31,7 +31,7 @@ function doPost(e) {
         'Company', 'Industry', 'Contact Name', 'Contact Email',
         'Developer Count', 'Dev Count Note',
         'DC Sites', 'Deployment Type',
-        'Storage (Current)', 'Storage Growth', 'Existing Tool',
+        'Storage (Current)', 'Existing Tools',
         'Security Tools', 'Compliance Requirements',
         'Package Types (Current)', 'Package Types (Planned)',
         'Pain Points', 'Objectives',
@@ -40,7 +40,7 @@ function doPost(e) {
       ]);
 
       // Style header row
-      const header = sheet.getRange(1, 1, 1, 25);
+      const header = sheet.getRange(1, 1, 1, 24);
       header.setBackground('#1A1A2E').setFontColor('#ffffff').setFontWeight('bold');
       sheet.setFrozenRows(1);
     }
@@ -66,8 +66,7 @@ function doPost(e) {
       (d.infrastructure?.dataCenterSites || []).join(', '),
       d.infrastructure?.deploymentType   || '',
       d.infrastructure?.storageCurrentGB || '',
-      d.infrastructure?.storageGrowth    || '',
-      d.infrastructure?.existingTool     || '',
+      (d.infrastructure?.existingTools || []).join(', ') || '',
       (d.security?.toolsInUse || []).join(', '),
       d.security?.compliance || '',
       (d.packages?.currentTypes || []).join(', '),
@@ -85,7 +84,7 @@ function doPost(e) {
 
     // Auto-resize columns on first few rows
     if (sheet.getLastRow() <= 3) {
-      sheet.autoResizeColumns(1, 25);
+      sheet.autoResizeColumns(1, 24);
     }
 
     return ContentService

@@ -51,24 +51,32 @@ tailwind.config = {
 </head>
 <body>
 
-<!-- Header -->
-<header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
-  <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
-        <rect width="40" height="40" rx="8" fill="#40BE46"/>
-        <path d="M20 8L32 14V26L20 32L8 26V14L20 8Z" fill="white" opacity=".9"/>
-        <circle cx="20" cy="20" r="5" fill="#40BE46"/>
-      </svg>
-      <div>
-        <div class="font-bold text-gray-800 text-sm leading-tight">JFrog</div>
-        <div class="text-gray-400 text-xs leading-tight">New Customer Questionnaire</div>
+<!-- Header + Step Nav (single sticky block) -->
+<div class="sticky top-0 z-50 bg-white shadow-sm">
+  <div class="border-b border-gray-100">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#40BE46"/>
+          <path d="M20 8L32 14V26L20 32L8 26V14L20 8Z" fill="white" opacity=".9"/>
+          <circle cx="20" cy="20" r="5" fill="#40BE46"/>
+        </svg>
+        <div>
+          <div class="font-bold text-gray-800 text-sm leading-tight">JFrog</div>
+          <div class="text-gray-400 text-xs leading-tight">New Customer Questionnaire</div>
+        </div>
       </div>
+      <!-- Mobile: step counter -->
+      <div id="stepLabel" class="sm:hidden text-xs font-medium text-gray-400"></div>
     </div>
-    <div id="stepLabel" class="text-xs font-medium text-gray-400"></div>
   </div>
-</header>
-<div class="bg-gray-200 h-1"><div id="progressBar" class="progress-bar bg-jfrog-green h-1" style="width:0%"></div></div>
+  <!-- Progress bar -->
+  <div class="bg-gray-200 h-0.5"><div id="progressBar" class="progress-bar bg-jfrog-green h-0.5" style="width:0%"></div></div>
+  <!-- Step nav (desktop) -->
+  <div class="max-w-3xl mx-auto px-4 py-2 border-b border-gray-50">
+    <div id="stepNav" class="flex items-center gap-0.5 text-xs overflow-x-auto whitespace-nowrap"></div>
+  </div>
+</div>
 
 <main class="max-w-3xl mx-auto px-4 py-8 pb-16">
 
@@ -230,11 +238,11 @@ tailwind.config = {
         <!-- APAC Tier-2 (collapsed by default) -->
         <div id="apacT2Row" class="hidden flex flex-wrap items-center gap-1.5">
           <span class="text-xs text-gray-400 w-16 flex-shrink-0">🌏 APAC T2</span>
+          <span class="qk" onclick="addDcTag('Bangalore')">+ Bangalore</span>
           <span class="qk" onclick="addDcTag('Osaka')">+ Osaka</span>
           <span class="qk" onclick="addDcTag('Nagoya')">+ Nagoya</span>
           <span class="qk" onclick="addDcTag('Fukuoka')">+ Fukuoka</span>
           <span class="qk" onclick="addDcTag('Busan')">+ Busan</span>
-          <span class="qk" onclick="addDcTag('Bangalore')">+ Bangalore</span>
           <span class="qk" onclick="addDcTag('Delhi')">+ Delhi</span>
           <span class="qk" onclick="addDcTag('Hyderabad')">+ Hyderabad</span>
           <span class="qk" onclick="addDcTag('Chennai')">+ Chennai</span>
@@ -283,38 +291,23 @@ tailwind.config = {
         <div class="rcard"><input type="radio" name="storageNow" id="s3" value="5 – 50 TB" class="hidden"><label for="s3" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">5 – 50 TB</div></label></div>
         <div class="rcard"><input type="radio" name="storageNow" id="s4" value="> 50 TB" class="hidden"><label for="s4" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">> 50 TB</div></label></div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1">Expected growth (next 12 months)</label>
-          <select id="storageGrowth" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
-            <option value="">Select…</option>
-            <option>< 20% growth</option>
-            <option>20 – 50% growth</option>
-            <option>50 – 100% growth</option>
-            <option>> 100% growth</option>
-            <option>Unsure</option>
-          </select>
+      <div class="mt-1">
+        <label class="block text-xs font-medium text-gray-500 mb-2">Current repository manager (select all that apply)</label>
+        <div class="flex flex-wrap gap-2 mb-2" id="existingToolPills">
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">None / First deployment</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Sonatype Nexus (OSS)</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Sonatype Nexus (Pro)</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">JFrog Artifactory (OSS / CE)</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">JFrog Artifactory (Pro / Cloud)</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Azure Artifacts</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">AWS CodeArtifact</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">GitHub Packages</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">GitLab Package Registry</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Google Artifact Registry</span>
+          <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">JFrog Container Registry (JCR)</span>
         </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1">Current repository manager (if any)</label>
-          <select id="existingTool" onchange="toggleExistingOther()"
-            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
-            <option value="">None / First deployment</option>
-            <option>Sonatype Nexus (OSS)</option>
-            <option>Sonatype Nexus (Pro)</option>
-            <option>JFrog Artifactory (OSS / CE)</option>
-            <option>JFrog Artifactory (Pro / Cloud)</option>
-            <option>Azure Artifacts</option>
-            <option>AWS CodeArtifact</option>
-            <option>GitHub Packages</option>
-            <option>GitLab Package Registry</option>
-            <option>Google Artifact Registry</option>
-            <option>JFrog Container Registry (JCR)</option>
-            <option value="Other">Other…</option>
-          </select>
-          <input id="existingToolOther" type="text" placeholder="Describe your current tool…"
-            class="hidden mt-1.5 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
-        </div>
+        <input id="existingToolOther" type="text" placeholder="Other tools not listed above…"
+          class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
       </div>
     </div>
 
@@ -634,8 +627,11 @@ tailwind.config = {
 // ── State ─────────────────────────────────────────────────────────────────────
 let step = 1;
 let data = {};
+const visitedSteps = new Set([1]);
 
-window.addEventListener('DOMContentLoaded', () => { syncProgress(); });
+const STEP_LABELS = ['Company Info', 'Infrastructure', 'Security & Packages', 'Pain Points', 'Results'];
+
+window.addEventListener('DOMContentLoaded', () => { syncProgress(); renderStepNav(); });
 
 // ── Free-email blocklist ──────────────────────────────────────────────────────
 const FREE_DOMAINS = new Set([
@@ -684,14 +680,38 @@ function show(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('step' + n).classList.add('active');
   step = n;
+  visitedSteps.add(n);
   syncProgress();
+  renderStepNav();
   window.scrollTo({ top:0, behavior:'smooth' });
   if (n === 5) initGsUi();
 }
 function syncProgress() {
   const pct = ((step - 1) / 4) * 100;
   document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('stepLabel').textContent = step <= 4 ? `${step} / 4` : 'Results';
+  const lbl = document.getElementById('stepLabel');
+  if (lbl) lbl.textContent = step <= 4 ? `${step} / 4` : 'Results';
+}
+function renderStepNav() {
+  const nav = document.getElementById('stepNav');
+  if (!nav) return;
+  nav.innerHTML = STEP_LABELS.map((label, i) => {
+    const n = i + 1;
+    const isCurrent  = n === step;
+    const isVisited  = visitedSteps.has(n);
+    const clickable  = isVisited && !isCurrent;
+    let btnCls, onclick = '';
+    if (isCurrent) {
+      btnCls = 'px-2.5 py-1 rounded-md font-semibold bg-jfrog-green text-white';
+    } else if (isVisited) {
+      btnCls = 'px-2.5 py-1 rounded-md font-medium text-jfrog-green hover:bg-green-50 cursor-pointer transition-colors';
+      onclick = `onclick="show(${n})"`;
+    } else {
+      btnCls = 'px-2.5 py-1 rounded-md font-medium text-gray-300 cursor-default';
+    }
+    const arrow = n < 5 ? '<span class="text-gray-300 mx-0.5 select-none">›</span>' : '';
+    return `<button class="text-xs ${btnCls}" ${onclick}>${n === 5 ? label : n + '. ' + label}</button>${arrow}`;
+  }).join('');
 }
 
 // ── Pills ─────────────────────────────────────────────────────────────────────
@@ -807,12 +827,6 @@ function toggleApacT2() {
   const open = row.classList.toggle('hidden');
   btn.textContent = open ? '+ More APAC ▾' : '− Hide APAC ▴';
 }
-function toggleExistingOther() {
-  const sel   = document.getElementById('existingTool');
-  const other = document.getElementById('existingToolOther');
-  other.classList.toggle('hidden', sel.value !== 'Other');
-}
-
 // ── Radio helper ──────────────────────────────────────────────────────────────
 function radioVal(name) { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; }
 
@@ -832,10 +846,11 @@ function collect() {
       dataCenterSites: getDcTags(),
       deploymentType: radioVal('deployType'),
       storageCurrentGB: radioVal('storageNow'),
-      storageGrowth: document.getElementById('storageGrowth').value,
-      existingTool: document.getElementById('existingTool').value === 'Other'
-        ? document.getElementById('existingToolOther').value.trim()
-        : document.getElementById('existingTool').value,
+      existingTools: [
+        ...getSelectedPills('existingToolPills').filter(t => t !== 'None / First deployment'),
+        ...(document.getElementById('existingToolOther').value.trim()
+          ? [document.getElementById('existingToolOther').value.trim()] : [])
+      ],
     },
     security: {
       toolsInUse: getSelectedPills('secToolPills'),
@@ -867,7 +882,8 @@ function score(d) {
   const pkgs = d.packages.currentTypes;
   const pains = d.painPoints.pains;
   const objs = d.painPoints.objectives;
-  const existing = d.infrastructure.existingTool.toLowerCase();
+  const existingTools = d.infrastructure.existingTools || [];
+  const existingStr   = existingTools.join(' ').toLowerCase();
   const compliance = d.security.compliance;
 
   // ── Artifactory ───────────────────────────────────────────────────────────
@@ -877,8 +893,11 @@ function score(d) {
     if (['201–1000','1000+'].includes(devCount)) { s += 10; why.push(`${devCount} developers need reliable, scalable artifact storage`); }
     if (['5 – 50 TB','> 50 TB'].includes(storage)) { s += 8; why.push(`${storage} of artifacts requires enterprise-grade storage management`); }
     if (pkgs.length > 3) { s += 5; why.push(`${pkgs.length} package types benefit from a universal repository manager`); }
-    if (pains.includes('Migrating from Nexus / other tool') || existing.includes('nexus')) { s += 7; why.push('Migration from existing tool — JFrog offers a proven migration path'); }
-    recs.push({ product:'JFrog Artifactory', cat:'Universal Artifact Repository', icon:'📦', s: Math.min(100,s), priority:'high', desc:'Universal binary repository supporting 30+ package types. Single source of truth for all artifacts — from development to production.', why, action:'Start with a PoC covering your top 3 package types. JFrog provides a migration tool for Nexus/Artifactory OSS.' });
+    const hasNexus = pains.includes('Migrating from Nexus / other tool') || existingStr.includes('nexus');
+    if (hasNexus) { s += 7; why.push('Migration from Nexus — JFrog offers a proven migration path and import tool'); }
+    if (existingTools.length > 1) { s += 5; why.push(`${existingTools.length} disparate repository tools — consolidating onto one platform reduces maintenance overhead`); }
+    const migAction = hasNexus ? 'Use JFrog's free Nexus migration tool for a zero-downtime cut-over.' : 'Start with a PoC covering your top 3 package types.';
+    recs.push({ product:'JFrog Artifactory', cat:'Universal Artifact Repository', icon:'📦', s: Math.min(100,s), priority:'high', desc:'Universal binary repository supporting 30+ package types. Single source of truth for all artifacts — from development to production.', why, action: migAction });
   }
 
   // ── Xray ──────────────────────────────────────────────────────────────────
@@ -1029,8 +1048,7 @@ Q2 — DEVELOPER COUNT
 
 Q3 — STORAGE
   Current     : ${d.infrastructure.storageCurrentGB || '—'}
-  Growth      : ${d.infrastructure.storageGrowth || '—'}
-  Existing    : ${d.infrastructure.existingTool || '—'}
+  Existing    : ${(d.infrastructure.existingTools || []).join(', ') || 'None / First deployment'}
 
 Q4 — SECURITY TOOLS
   In use      : ${d.security.toolsInUse.join(', ') || 'None'}
