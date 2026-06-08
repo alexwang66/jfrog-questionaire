@@ -506,10 +506,48 @@ tailwind.config = {
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
     <h3 class="font-semibold text-gray-800 mb-1">Save & Share Results</h3>
     <p class="text-xs text-gray-400 mb-4">No account or login required.</p>
+
+    <!-- Google Sheets config (collapsible) -->
+    <div id="gsConfigBlock" class="mb-4 border border-gray-100 rounded-xl overflow-hidden">
+      <button onclick="toggleGsConfig()" id="gsConfigToggle"
+        class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          Google Sheets — Auto-save destination
+        </span>
+        <span id="gsStatusDot" class="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-500">Not configured</span>
+      </button>
+      <div id="gsConfigPanel" class="hidden px-4 pb-4 pt-3 bg-white space-y-3">
+        <p class="text-xs text-gray-500">Paste the <strong>Web App URL</strong> from your Google Apps Script deployment. Submissions will be appended as rows in your Google Sheet.</p>
+        <div class="flex gap-2">
+          <input id="gsUrlInput" type="url"
+            placeholder="https://script.google.com/macros/s/…/exec"
+            class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm"
+            oninput="validateGsUrl()">
+          <button onclick="saveGsUrl()" id="gsUrlSaveBtn"
+            class="bg-jfrog-green text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Save
+          </button>
+          <button onclick="clearGsUrl()" title="Remove saved URL"
+            class="border border-gray-200 text-gray-400 px-3 py-2 rounded-lg text-sm hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors">
+            ✕
+          </button>
+        </div>
+        <p class="text-xs text-gray-400">The URL is stored locally in your browser — never sent anywhere else.</p>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
     <div class="flex flex-col sm:flex-row gap-3">
+      <!-- Save to Sheets -->
+      <button onclick="submitToSheets()" id="gsSaveBtn"
+        class="flex-1 bg-jfrog-green text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-jfrog-green">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Save to Google Sheets
+      </button>
       <!-- Copy -->
       <button onclick="copyResults()" id="copyBtn"
-        class="flex-1 bg-jfrog-green text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2">
+        class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
         Copy Summary
       </button>
@@ -517,13 +555,13 @@ tailwind.config = {
       <button onclick="sendEmail()"
         class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        Send via Email
+        Email
       </button>
       <!-- Download -->
       <button onclick="downloadJSON()"
         class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        Download JSON
+        JSON
       </button>
       <!-- New -->
       <button onclick="location.reload()"
@@ -532,6 +570,7 @@ tailwind.config = {
         New
       </button>
     </div>
+    <div id="sheetsStatus" class="mt-3 hidden"></div>
     <div id="copyStatus" class="mt-3 hidden"></div>
   </div>
 </div>
@@ -557,6 +596,7 @@ function show(n) {
   step = n;
   syncProgress();
   window.scrollTo({ top:0, behavior:'smooth' });
+  if (n === 5) initGsUi();
 }
 function syncProgress() {
   const pct = ((step - 1) / 4) * 100;
@@ -930,6 +970,105 @@ function downloadJSON() {
   a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type:'application/json'}));
   a.download = `jfrog-questionnaire-${(data.company?.name||'unknown').replace(/\s+/g,'-')}-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
+}
+
+// ── Google Sheets Integration ─────────────────────────────────────────────────
+const GS_KEY = 'jfrog_gs_url';
+
+function loadGsUrl() {
+  const url = localStorage.getItem(GS_KEY) || '';
+  const input = document.getElementById('gsUrlInput');
+  if (input) input.value = url;
+  syncGsUi(url);
+}
+
+function validateGsUrl() {
+  const v = document.getElementById('gsUrlInput').value.trim();
+  const btn = document.getElementById('gsUrlSaveBtn');
+  const ok = v.startsWith('https://script.google.com/macros/s/') && v.endsWith('/exec');
+  if (btn) btn.disabled = !ok && v.length > 0;
+}
+
+function saveGsUrl() {
+  const v = document.getElementById('gsUrlInput').value.trim();
+  if (!v) { clearGsUrl(); return; }
+  localStorage.setItem(GS_KEY, v);
+  syncGsUi(v);
+  document.getElementById('gsConfigPanel').classList.add('hidden');
+  showSheetsMsg('success', '✅ Google Sheets URL saved.');
+}
+
+function clearGsUrl() {
+  localStorage.removeItem(GS_KEY);
+  const input = document.getElementById('gsUrlInput');
+  if (input) input.value = '';
+  syncGsUi('');
+}
+
+function syncGsUi(url) {
+  const dot  = document.getElementById('gsStatusDot');
+  const btn  = document.getElementById('gsSaveBtn');
+  const ok   = url && url.startsWith('https://script.google.com/macros/s/');
+  if (dot) {
+    dot.textContent  = ok ? 'Configured ✓' : 'Not configured';
+    dot.className    = ok
+      ? 'text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700'
+      : 'text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-500';
+  }
+  if (btn) btn.disabled = !ok;
+}
+
+function toggleGsConfig() {
+  const panel = document.getElementById('gsConfigPanel');
+  panel.classList.toggle('hidden');
+}
+
+function showSheetsMsg(type, msg) {
+  const el = document.getElementById('sheetsStatus');
+  el.classList.remove('hidden');
+  const cls = type === 'success'
+    ? 'text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2'
+    : type === 'error'
+    ? 'text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2'
+    : 'text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2';
+  el.innerHTML = `<div class="${cls}">${msg}</div>`;
+}
+
+async function submitToSheets() {
+  const url = localStorage.getItem(GS_KEY);
+  if (!url) {
+    document.getElementById('gsConfigPanel').classList.remove('hidden');
+    showSheetsMsg('info', 'ℹ️ Please enter your Google Apps Script Web App URL first.');
+    return;
+  }
+  const btn = document.getElementById('gsSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Saving…`;
+  showSheetsMsg('info', '⏳ Sending to Google Sheets…');
+
+  try {
+    // Apps Script Web App requires a no-cors POST (CORS headers vary by deployment)
+    const resp = await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',   // Apps Script returns opaque response — check Sheet manually
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    // With no-cors we can't read the response body, but if no exception was thrown
+    // the request was delivered successfully.
+    showSheetsMsg('success', '✅ Saved to Google Sheets! Open your Sheet to confirm the new row was added.');
+    btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Saved ✓`;
+    btn.classList.replace('bg-jfrog-green', 'bg-green-700');
+  } catch (err) {
+    showSheetsMsg('error', `❌ Failed to save: ${err.message}. Check the URL and try again.`);
+    btn.disabled = false;
+    btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Save to Google Sheets`;
+  }
+}
+
+// init GS UI when results page is shown (called from show())
+function initGsUi() {
+  loadGsUrl();
 }
 </script>
 </body>
