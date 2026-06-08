@@ -894,12 +894,25 @@ function score(d) {
   }
 
   // ── Curation ──────────────────────────────────────────────────────────────
-  if (pkgs.some(p => ['npm / Node.js','PyPI / Python','Maven / Java','Docker / OCI'].includes(p))) {
+  // Supported package types per official JFrog docs (as of 2026):
+  // npm, PyPI, Maven, Go, NuGet, RubyGems, Conan, Cargo/Rust, Docker/OCI,
+  // HuggingFace ML, Conda, Pub (Dart/Flutter), PHP Composer, Debian/Ubuntu, VS Code
+  const CURATION_SUPPORTED = [
+    'npm / Node.js','PyPI / Python','Maven / Java','Go Modules',
+    'NuGet / .NET','Conan / C++','Cargo / Rust','Docker / OCI',
+    'ML Models (HuggingFace / ONNX)','RPM / Debian',
+  ];
+  const curationPkgs = pkgs.filter(p => CURATION_SUPPORTED.includes(p));
+  if (curationPkgs.length > 0) {
     let s = 60;
-    const why = ['Uses open-source packages from public registries — Curation blocks malicious packages at ingestion'];
+    const why = [`Using ${curationPkgs.join(', ')} — all supported by Curation for malicious package & CVE blocking at ingestion`];
     if (pains.includes('Security vulnerabilities in dependencies')) { s = 82; why.push('Prevent vulnerable OSS from entering your environment proactively'); }
     if (compliance) { s = Math.min(100, s+8); why.push('Compliance requires auditable OSS ingestion controls'); }
-    recs.push({ product:'JFrog Curation', cat:'OSS Supply Chain Protection', icon:'🛡️', s: Math.min(100,s), priority: s >= 78 ? 'high' : 'medium', desc:'Block malicious, severely vulnerable, or non-compliant OSS packages before they enter your SDLC — without slowing down developers.', why, action:'Demo: block a simulated malicious npm package (e.g. axios@1.7.2) at the proxy level, zero code changes required.' });
+    const pkgCount = curationPkgs.length;
+    const action = pkgCount >= 3
+      ? `Demo: show Curation blocking a malicious ${curationPkgs[0]} package at the proxy — zero code changes, all ${pkgCount} of your package types are supported.`
+      : `Demo: block a malicious ${curationPkgs[0]} package at ingestion before it enters your SDLC.`;
+    recs.push({ product:'JFrog Curation', cat:'OSS Supply Chain Protection', icon:'🛡️', s: Math.min(100,s), priority: s >= 78 ? 'high' : 'medium', desc:'Block malicious, severely vulnerable, or license-violating OSS packages before they enter your SDLC — at the proxy level, with zero developer friction. Supports npm, PyPI, Maven, Go, NuGet, Conan, Cargo, Docker, HuggingFace ML, and more.', why, action });
   }
 
   // ── Advanced Security ────────────────────────────────────────────────────
