@@ -459,8 +459,8 @@ tailwind.config = {
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Back
     </button>
     <button onclick="generateResults()" class="bg-jfrog-green text-white px-8 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center gap-2">
-      View Recommendations
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Submit
     </button>
   </div>
 </div>
@@ -504,30 +504,28 @@ tailwind.config = {
   <!-- Recommendation cards -->
   <div id="recList" class="space-y-4 mb-5"></div>
 
-  <!-- Save (customer-facing) -->
+  <!-- Submit status + secondary actions -->
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-    <h3 class="font-semibold text-gray-800 mb-1">Save & Share Results</h3>
-    <p class="text-xs text-gray-400 mb-4">Download or share this assessment summary.</p>
-    <div class="flex flex-col sm:flex-row gap-3">
-      <!-- Copy -->
+    <!-- Auto-submit status banner -->
+    <div id="submitStatusBanner" class="mb-5 rounded-xl px-4 py-3 flex items-center gap-3 bg-gray-50 border border-gray-200">
+      <svg id="submitStatusIcon" class="w-5 h-5 flex-shrink-0 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+      <span id="submitStatusText" class="text-sm text-gray-500">Submitting…</span>
+    </div>
+    <!-- Secondary actions -->
+    <div class="flex flex-wrap gap-3">
       <button onclick="copyResults()" id="copyBtn"
-        class="flex-1 bg-jfrog-green text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2">
+        class="flex-1 min-w-[140px] border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
         Copy Summary
       </button>
-      <!-- Email -->
-      <button onclick="sendEmail()"
-        class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        Send via Email
-      </button>
-      <!-- Download -->
       <button onclick="downloadJSON()"
-        class="flex-1 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+        class="flex-1 min-w-[140px] border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         Download JSON
       </button>
-      <!-- New -->
       <button onclick="location.reload()"
         class="border border-gray-200 text-gray-400 px-4 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -927,6 +925,8 @@ function generateResults() {
   });
 
   show(5);
+  // Auto-submit to Google Sheets if SE has configured an endpoint
+  setTimeout(() => autoSubmitToSheets(), 300);
 }
 
 // ── Build plain-text summary ──────────────────────────────────────────────────
@@ -1082,8 +1082,63 @@ function toggleGsConfig() {
   panel.classList.toggle('hidden');
 }
 
+// ── Submit status banner (customer-facing) ────────────────────────────────────
+function setSubmitBanner(state, msg) {
+  const banner = document.getElementById('submitStatusBanner');
+  if (!banner) return;
+  const states = {
+    loading: {
+      bg: 'bg-gray-50 border-gray-200',
+      iconHtml: `<svg class="w-5 h-5 flex-shrink-0 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>`,
+      textCls: 'text-sm text-gray-500'
+    },
+    success: {
+      bg: 'bg-green-50 border-green-200',
+      iconHtml: `<svg class="w-5 h-5 flex-shrink-0 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+      textCls: 'text-sm text-green-700 font-medium'
+    },
+    error: {
+      bg: 'bg-red-50 border-red-200',
+      iconHtml: `<svg class="w-5 h-5 flex-shrink-0 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+      textCls: 'text-sm text-red-600'
+    },
+    none: {
+      bg: 'bg-blue-50 border-blue-100',
+      iconHtml: `<svg class="w-5 h-5 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
+      textCls: 'text-sm text-blue-600'
+    }
+  };
+  const s = states[state] || states.none;
+  banner.className = `mb-5 rounded-xl px-4 py-3 flex items-center gap-3 border ${s.bg}`;
+  banner.innerHTML = `${s.iconHtml}<span id="submitStatusText" class="${s.textCls}">${msg}</span>`;
+}
+
+// ── Auto-submit (called by generateResults) ───────────────────────────────────
+async function autoSubmitToSheets() {
+  const url = localStorage.getItem(GS_KEY);
+  if (!url) {
+    // No endpoint configured — show a neutral confirmation to customer
+    setSubmitBanner('none', 'Thank you! Your assessment is complete. Use the options below to save a copy.');
+    return;
+  }
+  setSubmitBanner('loading', 'Submitting your response…');
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    setSubmitBanner('success', 'Your response has been submitted successfully. Thank you!');
+  } catch (err) {
+    setSubmitBanner('error', 'Submission failed — please use "Copy Summary" or "Download JSON" to save your results.');
+  }
+}
+
+// ── Manual re-save from SE panel ──────────────────────────────────────────────
 function showSheetsMsg(type, msg) {
   const el = document.getElementById('sheetsStatus');
+  if (!el) return;
   el.classList.remove('hidden');
   const cls = type === 'success'
     ? 'text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2'
@@ -1097,31 +1152,27 @@ async function submitToSheets() {
   const url = localStorage.getItem(GS_KEY);
   if (!url) {
     document.getElementById('gsConfigPanel').classList.remove('hidden');
-    showSheetsMsg('info', 'ℹ️ Please enter your Google Apps Script Web App URL first.');
+    showSheetsMsg('info', 'ℹ️ Enter your Apps Script URL above first.');
     return;
   }
   const btn = document.getElementById('gsSaveBtn');
   btn.disabled = true;
   btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Saving…`;
-  showSheetsMsg('info', '⏳ Sending to Google Sheets…');
-
+  showSheetsMsg('info', '⏳ Saving…');
   try {
-    // Apps Script Web App requires a no-cors POST (CORS headers vary by deployment)
-    const resp = await fetch(url, {
+    await fetch(url, {
       method: 'POST',
-      mode: 'no-cors',   // Apps Script returns opaque response — check Sheet manually
+      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    // With no-cors we can't read the response body, but if no exception was thrown
-    // the request was delivered successfully.
-    showSheetsMsg('success', '✅ Saved to Google Sheets! Open your Sheet to confirm the new row was added.');
+    showSheetsMsg('success', '✅ Saved to Google Sheets.');
     btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Saved ✓`;
     btn.classList.replace('bg-jfrog-green', 'bg-green-700');
   } catch (err) {
-    showSheetsMsg('error', `❌ Failed to save: ${err.message}. Check the URL and try again.`);
+    showSheetsMsg('error', `❌ ${err.message}`);
     btn.disabled = false;
-    btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Save to Google Sheets`;
+    btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Retry`;
   }
 }
 
