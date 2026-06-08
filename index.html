@@ -108,9 +108,11 @@ tailwind.config = {
           class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Email</label>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Email <span class="text-red-500">*</span></label>
         <input id="contactEmail" type="email" placeholder="john@company.com"
-          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm">
+          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm"
+          oninput="validateEmailField()">
+        <p id="emailErr" class="hidden mt-1 text-xs text-red-500"></p>
       </div>
     </div>
 
@@ -597,9 +599,46 @@ let data = {};
 
 window.addEventListener('DOMContentLoaded', () => { syncProgress(); });
 
+// ── Free-email blocklist ──────────────────────────────────────────────────────
+const FREE_DOMAINS = new Set([
+  'gmail.com','googlemail.com','yahoo.com','yahoo.cn','yahoo.co.jp','yahoo.co.uk',
+  'hotmail.com','hotmail.cn','outlook.com','live.com','msn.com',
+  'qq.com','163.com','126.com','sina.com','sina.cn','sohu.com','139.com',
+  '189.cn','wo.cn','foxmail.com','yeah.net','21cn.com',
+  'icloud.com','me.com','mac.com',
+  'protonmail.com','proton.me','tutanota.com','pm.me',
+  'aol.com','zoho.com','yandex.com','yandex.ru','mail.ru',
+]);
+
+function isFreeEmail(email) {
+  const domain = (email.split('@')[1] || '').toLowerCase().trim();
+  return FREE_DOMAINS.has(domain);
+}
+
+function validateEmailField() {
+  const el  = document.getElementById('contactEmail');
+  const err = document.getElementById('emailErr');
+  const val = el.value.trim();
+  if (!val) { err.classList.add('hidden'); el.classList.remove('border-red-400'); return true; }
+  if (isFreeEmail(val)) {
+    err.textContent = 'Please use your company email address (not a personal/free email).';
+    err.classList.remove('hidden');
+    el.classList.add('border-red-400');
+    return false;
+  }
+  err.classList.add('hidden');
+  el.classList.remove('border-red-400');
+  return true;
+}
+
 // ── Navigation ────────────────────────────────────────────────────────────────
 function nextStep(from) {
-  if (from === 1 && !document.getElementById('companyName').value.trim()) { alert('Company name is required.'); return; }
+  if (from === 1) {
+    if (!document.getElementById('companyName').value.trim()) { alert('Company name is required.'); return; }
+    const email = document.getElementById('contactEmail').value.trim();
+    if (!email) { alert('Contact email is required.'); document.getElementById('contactEmail').focus(); return; }
+    if (!validateEmailField()) { document.getElementById('contactEmail').focus(); return; }
+  }
   show(from + 1);
 }
 function prevStep(from) { show(from - 1); }
