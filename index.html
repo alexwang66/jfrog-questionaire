@@ -1288,6 +1288,7 @@ function downloadPDF() {
 
 // ── Google Sheets Integration ─────────────────────────────────────────────────
 const GS_KEY = 'jfrog_gs_url';
+const DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbw1PK6D6yXlRXe8TjsZD__j9ouiYwaegAgm0Sb0ovx6mXu_5_xiPFUP0vj_XhIopWE4/exec';
 
 function loadGsUrl() {
   const url = localStorage.getItem(GS_KEY) || '';
@@ -1409,7 +1410,7 @@ function fmtWait(secs) {
 
 // ── Auto-submit (called by generateResults) ───────────────────────────────────
 async function autoSubmitToSheets() {
-  const url = localStorage.getItem(GS_KEY);
+  const url = localStorage.getItem(GS_KEY) || DEFAULT_GS_URL;
   if (!url) {
     setSubmitBanner('none', t('bannerNoUrl'));
     return;
@@ -1453,7 +1454,7 @@ function showSheetsMsg(type, msg) {
 }
 
 async function submitToSheets() {
-  const url = localStorage.getItem(GS_KEY);
+  const url = localStorage.getItem(GS_KEY) || DEFAULT_GS_URL;
   if (!url) {
     document.getElementById('gsConfigPanel').classList.remove('hidden');
     showSheetsMsg('info', 'ℹ️ Enter your Apps Script URL above first.');
