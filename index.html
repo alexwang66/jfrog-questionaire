@@ -6,7 +6,7 @@
 <title>JFrog New Customer Questionnaire</title>
 <link rel="icon" href="https://speedmedia2.jfrog.com/08612fe1-9391-4cf3-ac1a-6dd49c36b276/media.jfrog.com/wp-content/uploads/2019/04/20131046/Jfrog16-1.png">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 tailwind.config = {
   theme: {
@@ -683,6 +683,7 @@ const LANGS = {
     bannerLoading:'Submitting your response…',
     bannerSuccess:'Your response has been submitted successfully. Thank you!',
     bannerError:'Submission failed — please use "Copy Summary" or "Download PDF" to save your results.',
+    bannerConnErr:'Network timeout (Google may be blocked). Please use "Download PDF" to save your results.',
     moreCn:'+ More CN cities', hideCn:'− Hide CN cities',
     moreApac:'+ More APAC', hideApac:'− Hide APAC',
   },
@@ -732,6 +733,7 @@ const LANGS = {
     bannerLoading:'正在提交問卷，請稍候…',
     bannerSuccess:'問卷已成功提交，感謝您！',
     bannerError:'提交失敗，請使用「複製摘要」或「下載 PDF」儲存結果。',
+    bannerConnErr:'連線逾時（Google 在此網路受限）。請使用「下載 PDF」儲存您的結果。',
     moreCn:'+ 更多中國城市', hideCn:'− 隱藏中國城市',
     moreApac:'+ 更多亞太城市', hideApac:'− 隱藏亞太城市',
   }
@@ -1266,25 +1268,130 @@ function downloadPDF() {
   btn.disabled = true;
   btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> <span>Generating…</span>`;
 
-  const actionsEl = document.querySelector('#step5 .bg-white.rounded-2xl');
-  actionsEl.style.display = 'none';
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+    const ml = 40, mr = 40;
+    const cW = W - ml - mr;
+    // Strip non-ASCII (emojis, etc.) so standard PDF fonts render cleanly
+    const clean = s => (s || '').replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '').trim();
 
-  const el = document.getElementById('step5');
-  const companySlug = (data.company?.name || 'unknown').replace(/\s+/g, '-');
-  const dateStr = new Date().toISOString().slice(0, 10);
+    const recs = data.recommendations || [];
+    const overallScore = Math.round(recs.reduce((a, r) => a + r.s, 0) / Math.max(recs.length, 1));
+    const high = recs.filter(r => r.priority === 'high').length;
+    const med  = recs.filter(r => r.priority === 'medium').length;
+    const low  = recs.filter(r => r.priority === 'low').length;
 
-  const restore = () => {
-    actionsEl.style.display = '';
-    btn.disabled = false;
-    btn.innerHTML = origContent;
-  };
+    // Header bar
+    doc.setFillColor(26, 26, 46);
+    doc.rect(0, 0, W, 50, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(255, 255, 255);
+    doc.text('JFrog Customer Assessment', ml, 32);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(64, 190, 70);
+    doc.text(new Date().toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }), W - mr, 32, { align:'right' });
 
-  html2pdf().set({
-    margin: [8, 8, 8, 8],
-    filename: `jfrog-questionnaire-${companySlug}-${dateStr}.pdf`,
-    html2canvas: { scale: 2, useCORS: true, logging: false },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).from(el).save().then(restore).catch(restore);
+    let y = 72;
+
+    // Company name + meta
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.setTextColor(26, 26, 46);
+    doc.text(clean(data.company?.name) || 'Customer', ml, y);
+    y += 15;
+    const meta = [data.company?.industry, data.infrastructure?.devCount ? data.infrastructure.devCount + ' developers' : '', data.infrastructure?.deploymentType].filter(Boolean);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(105, 110, 120);
+    if (meta.length) doc.text(meta.join('  \xB7  '), ml, y);
+    y += 20;
+
+    // Score banner
+    const bannerH = 72;
+    doc.setFillColor(26, 26, 46);
+    doc.roundedRect(ml, y, cW, bannerH, 6, 6, 'F');
+    // Score
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(34); doc.setTextColor(64, 190, 70);
+    doc.text(String(overallScore), W - mr - 12, y + 40, { align:'right' });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(155, 160, 175);
+    doc.text('fit score', W - mr - 12, y + 52, { align:'right' });
+    // Priority counts
+    const boxW = (cW * 0.56) / 3;
+    [high, med, low].forEach((count, i) => {
+      const cx = ml + 10 + i * (boxW + 8) + boxW / 2;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(24); doc.setTextColor(255, 255, 255);
+      doc.text(String(count), cx, y + 38, { align:'center' });
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(155, 160, 175);
+      doc.text(['High Priority', 'Consider', 'Informational'][i], cx, y + 50, { align:'center' });
+    });
+    y += bannerH + 18;
+
+    // Recommendation cards
+    const prioRGB = { high:[239,68,68], medium:[245,158,11], low:[74,222,128] };
+    for (const r of recs) {
+      const desc        = clean(r.desc);
+      const action      = clean(r.action);
+      const descLines   = doc.splitTextToSize(desc, cW - 20);
+      const actionLines = doc.splitTextToSize(action, cW - 30);
+      const whyH        = r.why?.length ? 18 : 0;
+      const cardH       = 16 + 13 + 6 + descLines.length * 12 + whyH + actionLines.length * 12 + 22;
+
+      if (y + cardH > H - 50) { doc.addPage(); y = 40; }
+
+      doc.setFillColor(255, 255, 255); doc.setDrawColor(220, 224, 232);
+      doc.roundedRect(ml, y, cW, cardH, 4, 4, 'FD');
+      const pc = prioRGB[r.priority] || prioRGB.low;
+      doc.setFillColor(...pc);
+      doc.roundedRect(ml, y, 4, cardH, 2, 2, 'F');
+
+      let cy = y + 16;
+      // Product + score
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(26, 26, 46);
+      doc.text(clean(r.product), ml + 12, cy);
+      doc.setTextColor(64, 190, 70);
+      doc.text(String(r.s), W - mr - 8, cy, { align:'right' });
+      cy += 13;
+      // Category
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 155, 168);
+      doc.text(clean(r.cat), ml + 12, cy);
+      cy += 14;
+      // Description
+      doc.setFontSize(9); doc.setTextColor(70, 75, 90);
+      doc.text(descLines, ml + 12, cy);
+      cy += descLines.length * 12 + 4;
+      // Why tags
+      if (r.why?.length) {
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(125, 130, 142);
+        doc.text('Based on: ' + r.why.map(clean).join(', '), ml + 12, cy);
+        cy += 16;
+      }
+      // Action box
+      const aBoxH = actionLines.length * 12 + 12;
+      doc.setFillColor(239, 246, 255); doc.roundedRect(ml + 8, cy, cW - 16, aBoxH, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(59, 130, 246);
+      const label = 'Next Step: ';
+      doc.text(label, ml + 13, cy + 9);
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(37, 99, 235);
+      doc.text(actionLines[0] || '', ml + 13 + doc.getTextWidth(label), cy + 9);
+      for (let i = 1; i < actionLines.length; i++) doc.text(actionLines[i], ml + 13, cy + 9 + i * 12);
+
+      y += cardH + 8;
+    }
+
+    // Footer on every page
+    const totalPages = doc.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(180, 185, 195);
+      doc.text('JFrog Customer Questionnaire  \xB7  jfrog.com', W / 2, H - 22, { align:'center' });
+      if (totalPages > 1) doc.text(`${p} / ${totalPages}`, W - mr, H - 22, { align:'right' });
+    }
+
+    const slug = (data.company?.name || 'unknown').replace(/\s+/g, '-');
+    doc.save(`jfrog-questionnaire-${slug}-${new Date().toISOString().slice(0,10)}.pdf`);
+  } catch(e) {
+    console.error('PDF error:', e);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = origContent;
 }
 
 // ── Google Sheets Integration ─────────────────────────────────────────────────
@@ -1427,17 +1534,22 @@ async function autoSubmitToSheets() {
   }
 
   setSubmitBanner('loading', t('bannerLoading'));
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 12000);
   try {
     await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(buildSecurePayload(data))
+      body: JSON.stringify(buildSecurePayload(data)),
+      signal: ctrl.signal
     });
+    clearTimeout(timer);
     markSubmitted(email);
     setSubmitBanner('success', t('bannerSuccess'));
   } catch (err) {
-    setSubmitBanner('error', t('bannerError'));
+    clearTimeout(timer);
+    setSubmitBanner('error', err.name === 'AbortError' ? t('bannerConnErr') : t('bannerError'));
   }
 }
 
