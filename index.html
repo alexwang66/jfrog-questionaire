@@ -70,7 +70,18 @@ tailwind.config = {
       </div>
       <!-- Mobile: step counter -->
       <div id="stepLabel" class="sm:hidden text-xs font-medium text-gray-400"></div>
-      <button id="langToggleBtn" onclick="toggleLang()" class="text-xs font-medium text-gray-400 hover:text-jfrog-green border border-gray-200 hover:border-jfrog-green px-2.5 py-1 rounded-full transition-colors">中文</button>
+      <div class="relative" id="langMenuWrap">
+        <button id="langToggleBtn" onclick="toggleLangMenu()" class="text-xs font-medium text-gray-400 hover:text-jfrog-green border border-gray-200 hover:border-jfrog-green px-2.5 py-1 rounded-full transition-colors flex items-center gap-1">
+          <span id="langCurrent">EN</span>
+          <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="langDropdown" class="hidden absolute right-0 top-full mt-1.5 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden" style="min-width:112px">
+          <button onclick="setLang('en')"   class="lang-opt w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50">English</button>
+          <button onclick="setLang('zhCN')" class="lang-opt w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50">简体中文</button>
+          <button onclick="setLang('zh')"   class="lang-opt w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50">繁體中文</button>
+          <button onclick="setLang('ko')"   class="lang-opt w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50">한국어</button>
+        </div>
+      </div>
     </div>
   </div>
   <!-- Progress bar -->
@@ -636,9 +647,12 @@ const visitedSteps = new Set([1]);
 // ── i18n ──────────────────────────────────────────────────────────────────────
 let currentLang = localStorage.getItem('jfrog_lang') || 'en';
 
+const LANG_LABELS = { en:'EN', zhCN:'简中', zh:'繁中', ko:'한국어' };
+const LANG_HTML   = { en:'en', zhCN:'zh-CN', zh:'zh-TW', ko:'ko' };
+
 const LANGS = {
   en: {
-    appSubtitle:'New Customer Questionnaire', langToggle:'中文',
+    appSubtitle:'New Customer Questionnaire',
     step1Label:'Company Info', step2Label:'Infrastructure', step3Label:'Security & Packages', step4Label:'Pain Points', step5Label:'Results',
     step1Badge:'Step 1 of 4', step2Badge:'Step 2 of 4', step3Badge:'Step 3 of 4', step4Badge:'Step 4 of 4', r5Badge:'Results',
     s1Title:'Company Information', s1Subtitle:'Tell us about your organization so we can tailor the right solution.',
@@ -684,11 +698,65 @@ const LANGS = {
     bannerSuccess:'Your response has been submitted successfully. Thank you!',
     bannerError:'Submission failed — please use "Copy Summary" or "Download PDF" to save your results.',
     bannerConnErr:'Network timeout (Google may be blocked). Please use "Download PDF" to save your results.',
+    rateLimitUser:'This email has already been submitted. Please wait {wait} before resubmitting.',
+    rateLimitSE:'⚠️ Already submitted. Please wait {wait} before saving again.',
     moreCn:'+ More CN cities', hideCn:'− Hide CN cities',
     moreApac:'+ More APAC', hideApac:'− Hide APAC',
   },
+  zhCN: {
+    appSubtitle:'新客户问卷',
+    step1Label:'公司信息', step2Label:'基础设施', step3Label:'安全与软件包', step4Label:'痛点需求', step5Label:'评估结果',
+    step1Badge:'第 1 步，共 4 步', step2Badge:'第 2 步，共 4 步', step3Badge:'第 3 步，共 4 步', step4Badge:'第 4 步，共 4 步', r5Badge:'评估结果',
+    s1Title:'公司基本信息', s1Subtitle:'请填写贵公司的基本信息，以便我们提供最合适的解决方案。',
+    s1CompanyLabel:'公司名称', s1IndustryLabel:'所属行业', s1ContactNameLabel:'联系人姓名', s1ContactEmailLabel:'工作电子邮件',
+    s1DevCountLabel:'有多少开发人员（及其他用户）需要访问 JFrog Platform？',
+    s1DevCountHint:'例如：「约 500 位开发人员需要访问。」',
+    s1DevCountNotePh:'补充说明（例如：500 位开发人员 + 50 位 DevOps 工程师）',
+    s1Next:'下一步：基础设施',
+    s2Title:'基础设施与存储', s2Subtitle:'协助我们了解贵公司的数据中心分布与制品存储需求。',
+    s2DcLabel:'贵公司的数据中心位于哪些地点？',
+    s2DcHint:'请逐一输入数据中心的城市或站点。例如：「东京、大阪、纽约」',
+    s2DcPh:'输入城市名称后按 Enter…', s2QuickAdd:'快速添加：',
+    s2DeployLabel:'部署偏好', s2CloudDesc:'JFrog 托管', s2SelfHostedDesc:'本地 / 私有云', s2HybridDesc:'混合模式',
+    s2StorageLabel:'目前的制品 / 软件包存储量（及预期增长）？',
+    s2StorageHint:'例如：「我们目前在制品仓库中存放约 2 TB 的制品。」',
+    s2RepoMgrLabel:'目前使用的制品仓库管理工具（可多选）', s2OtherPh:'其他未列出的工具…',
+    s2Next:'下一步：安全与软件包',
+    s3Title:'安全工具与软件包类型', s3Subtitle:'了解贵公司目前的工具链与软件包生态系统。',
+    s3SecLabel:'贵公司在 SDLC 中目前使用哪些安全扫描工具？',
+    s3SecHint:'包含 SCA、容器扫描、密钥检测、SAST、DAST 等。例如：「我们使用 Black Duck 和 Snyk。」',
+    s3OtherPh:'其他未列出的工具…',
+    s3ComplianceLabel:'是否有合规要求？（SOC 2、ISO 27001、PCI DSS、HIPAA 等）', s3CompliancePh:'例如：SOC 2 Type II、ISO 27001',
+    s3PkgLabel:'目前使用哪些软件包类型，以及计划新增哪些？',
+    s3PkgHint:'例如：「Maven、Docker 和 npm。」请选择目前使用的，并在下方另选计划新增的。',
+    s3PkgCurrentLabel:'目前使用中：', s3PkgPlannedLabel:'计划新增（未来）：', s3Next:'下一步：痛点需求',
+    s4Title:'痛点与目标', s4Subtitle:'您正在尝试解决哪些挑战？',
+    s4PainLabel:'贵公司的主要痛点是什么？',
+    s4PainHint:'例如：「我们的 Nexus 仓库速度慢，且存在单点故障风险。」',
+    s4ObjLabel:'采用 JFrog 的主要目标',
+    s4TimelineLabel:'评估 / 采购时间线', s4BudgetLabel:'预算范围（选填）',
+    s4FreeTextLabel:'还有什么我们应该了解的？',
+    s4FreeTextPh:'请描述您的现状、迁移来源、特殊需求，或以上未覆盖的任何信息…',
+    s4Submit:'提交问卷',
+    r5Title:'JFrog 解决方案推荐', r5Subtitle:'根据您的填答，以下是针对贵公司量身定制的 JFrog 解决方案概览。',
+    r5FitScore:'契合分数', r5HighPriority:'高优先', r5Consider:'建议考虑', r5Informational:'参考信息',
+    r5CopyBtn:'复制摘要', r5DownloadBtn:'下载 PDF', r5NewBtn:'重新填写',
+    navBack:'上一步', rcHigh:'高优先', rcMed:'建议考虑', rcLow:'参考信息',
+    rcNextStep:'建议行动：',
+    errCompanyRequired:'请填写公司名称。', errEmailRequired:'请填写工作电子邮件。',
+    errEmailFree:'请使用公司电子邮件（不接受个人免费邮箱）。',
+    bannerNoUrl:'感谢您完成问卷！请使用下方选项保存副本。',
+    bannerLoading:'正在提交问卷，请稍候…',
+    bannerSuccess:'问卷已成功提交，感谢您！',
+    bannerError:'提交失败，请使用「复制摘要」或「下载 PDF」保存结果。',
+    bannerConnErr:'连接超时（Google 在此网络受限）。请使用「下载 PDF」保存您的结果。',
+    rateLimitUser:'此电子邮件已提交过问卷，请在 {wait} 后再试。',
+    rateLimitSE:'⚠️ 此电子邮件已提交，请在 {wait} 后再试。',
+    moreCn:'+ 更多中国城市', hideCn:'− 隐藏中国城市',
+    moreApac:'+ 更多亚太城市', hideApac:'− 隐藏亚太城市',
+  },
   zh: {
-    appSubtitle:'新客戶問卷', langToggle:'English',
+    appSubtitle:'新客戶問卷',
     step1Label:'公司資訊', step2Label:'基礎設施', step3Label:'安全與套件', step4Label:'痛點需求', step5Label:'評估結果',
     step1Badge:'第 1 步，共 4 步', step2Badge:'第 2 步，共 4 步', step3Badge:'第 3 步，共 4 步', step4Badge:'第 4 步，共 4 步', r5Badge:'評估結果',
     s1Title:'公司基本資訊', s1Subtitle:'請填寫貴公司的基本資訊，以便我們提供最合適的解決方案。',
@@ -701,7 +769,7 @@ const LANGS = {
     s2DcLabel:'貴公司的資料中心位於哪些地點？',
     s2DcHint:'請逐一輸入資料中心的城市或站點。例如：「東京、大阪、紐約」',
     s2DcPh:'輸入城市名稱後按 Enter…', s2QuickAdd:'快速新增：',
-    s2DeployLabel:'部署偶好', s2CloudDesc:'JFrog 代管', s2SelfHostedDesc:'地端 / 私有雲', s2HybridDesc:'混合模式',
+    s2DeployLabel:'部署偏好', s2CloudDesc:'JFrog 代管', s2SelfHostedDesc:'地端 / 私有雲', s2HybridDesc:'混合模式',
     s2StorageLabel:'目前的製品 / 套件儲存量（及預期成長）？',
     s2StorageHint:'例如：「我們目前在製品倉庫中存放約 2 TB 的製品。」',
     s2RepoMgrLabel:'目前使用的製品倉庫管理工具（可複選）', s2OtherPh:'其他未列出的工具…',
@@ -734,30 +802,95 @@ const LANGS = {
     bannerSuccess:'問卷已成功提交，感謝您！',
     bannerError:'提交失敗，請使用「複製摘要」或「下載 PDF」儲存結果。',
     bannerConnErr:'連線逾時（Google 在此網路受限）。請使用「下載 PDF」儲存您的結果。',
+    rateLimitUser:'此電子郵件已提交過問卷，請在 {wait} 後再試。',
+    rateLimitSE:'⚠️ 此電子郵件已提交，請在 {wait} 後再試。',
     moreCn:'+ 更多中國城市', hideCn:'− 隱藏中國城市',
     moreApac:'+ 更多亞太城市', hideApac:'− 隱藏亞太城市',
-  }
+  },
+  ko: {
+    appSubtitle:'신규 고객 설문',
+    step1Label:'회사 정보', step2Label:'인프라', step3Label:'보안 & 패키지', step4Label:'Pain Points', step5Label:'결과',
+    step1Badge:'4단계 중 1단계', step2Badge:'4단계 중 2단계', step3Badge:'4단계 중 3단계', step4Badge:'4단계 중 4단계', r5Badge:'결과',
+    s1Title:'회사 기본 정보', s1Subtitle:'적합한 솔루션을 제안드리기 위해 회사 정보를 알려주세요.',
+    s1CompanyLabel:'회사명', s1IndustryLabel:'산업', s1ContactNameLabel:'담당자 이름', s1ContactEmailLabel:'회사 이메일',
+    s1DevCountLabel:'JFrog Platform에 접근이 필요한 개발자(및 기타 사용자)는 몇 명인가요?',
+    s1DevCountHint:'예: "약 500명의 개발자가 접근이 필요합니다."',
+    s1DevCountNotePh:'추가 설명 (예: 개발자 500명 + DevOps 엔지니어 50명)',
+    s1Next:'다음: 인프라',
+    s2Title:'인프라 및 스토리지', s2Subtitle:'데이터 센터 위치와 아티팩트 스토리지 요구사항을 알려주세요.',
+    s2DcLabel:'데이터 센터는 어디에 위치해 있나요?',
+    s2DcHint:'데이터 센터 도시/사이트를 각각 입력하세요. 예: "도쿄, 오사카, 뉴욕"',
+    s2DcPh:'도시를 입력하고 Enter를 누르세요…', s2QuickAdd:'빠른 추가:',
+    s2DeployLabel:'배포 방식', s2CloudDesc:'JFrog 관리형', s2SelfHostedDesc:'온프레미스 / 프라이빗 클라우드', s2HybridDesc:'하이브리드',
+    s2StorageLabel:'현재 아티팩트 / 패키지 스토리지 규모(및 예상 증가량)는?',
+    s2StorageHint:'예: "현재 리포지토리에 약 2TB의 아티팩트를 저장하고 있습니다."',
+    s2RepoMgrLabel:'현재 사용 중인 리포지토리 관리 도구 (복수 선택 가능)', s2OtherPh:'목록에 없는 다른 도구…',
+    s2Next:'다음: 보안 & 패키지',
+    s3Title:'보안 도구 및 패키지 유형', s3Subtitle:'현재 사용 중인 툴체인과 패키지 생태계를 파악합니다.',
+    s3SecLabel:'SDLC에서 현재 사용 중인 보안 스캔 도구는 무엇인가요?',
+    s3SecHint:'SCA, 컨테이너 스캔, 시크릿 탐지, SAST, DAST 등 포함. 예: "Black Duck과 Snyk을 사용합니다."',
+    s3OtherPh:'목록에 없는 다른 도구…',
+    s3ComplianceLabel:'컴플라이언스 요구사항이 있나요? (SOC 2, ISO 27001, PCI DSS, HIPAA 등)', s3CompliancePh:'예: SOC 2 Type II, ISO 27001',
+    s3PkgLabel:'현재 사용 중인 패키지 유형과 추가 예정인 패키지 유형은?',
+    s3PkgHint:'예: "Maven, Docker, npm." 현재 사용 중인 것을 선택하고 추가 예정은 아래에서 선택하세요.',
+    s3PkgCurrentLabel:'현재 사용 중:', s3PkgPlannedLabel:'추가 예정 (향후):', s3Next:'다음: Pain Points',
+    s4Title:'Pain Points 및 목표', s4Subtitle:'어떤 과제를 해결하려 하시나요?',
+    s4PainLabel:'주요 Pain Points는 무엇인가요?',
+    s4PainHint:'예: "Nexus 리포지토리가 느리고 단일 장애점이 됩니다."',
+    s4ObjLabel:'JFrog 도입의 주요 목표',
+    s4TimelineLabel:'평가 / 구매 일정', s4BudgetLabel:'예산 범위 (선택)',
+    s4FreeTextLabel:'추가로 알려주실 내용이 있나요?',
+    s4FreeTextPh:'현재 상황, 마이그레이션 출처, 특별 요구사항 또는 위에서 다루지 않은 내용을 설명해 주세요…',
+    s4Submit:'설문 제출',
+    r5Title:'JFrog 솔루션 추천', r5Subtitle:'응답 내용을 바탕으로 맞춤형 JFrog 솔루션 개요를 제공합니다.',
+    r5FitScore:'적합도 점수', r5HighPriority:'높은 우선순위', r5Consider:'고려', r5Informational:'참고',
+    r5CopyBtn:'요약 복사', r5DownloadBtn:'PDF 다운로드', r5NewBtn:'처음부터',
+    navBack:'이전', rcHigh:'높은 우선순위', rcMed:'고려', rcLow:'참고',
+    rcNextStep:'권장 다음 단계:',
+    errCompanyRequired:'회사명을 입력해 주세요.', errEmailRequired:'회사 이메일을 입력해 주세요.',
+    errEmailFree:'회사 이메일 주소를 사용해 주세요 (개인/무료 이메일 불가).',
+    bannerNoUrl:'설문을 완료하셨습니다! 아래 옵션을 사용하여 사본을 저장하세요.',
+    bannerLoading:'응답을 제출 중입니다…',
+    bannerSuccess:'응답이 성공적으로 제출되었습니다. 감사합니다!',
+    bannerError:'제출 실패 — "요약 복사" 또는 "PDF 다운로드"를 사용하여 결과를 저장해 주세요.',
+    bannerConnErr:'네트워크 타임아웃. "PDF 다운로드"를 사용하여 결과를 저장해 주세요.',
+    rateLimitUser:'이 이메일은 이미 제출되었습니다. {wait} 후에 다시 시도해 주세요.',
+    rateLimitSE:'⚠️ 이미 제출되었습니다. {wait} 후에 저장해 주세요.',
+    moreCn:'+ 중국 도시 더보기', hideCn:'− 중국 도시 숨기기',
+    moreApac:'+ 아시아태평양 더보기', hideApac:'− 아시아태평양 숨기기',
+  },
 };
 
 function t(key) { return LANGS[currentLang]?.[key] ?? LANGS.en[key] ?? key; }
+function tFmt(key, vars) { return t(key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? ''); }
 
 function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('jfrog_lang', lang);
-  document.getElementById('htmlRoot').lang = lang === 'zh' ? 'zh-TW' : 'en';
-  document.getElementById('langToggleBtn').textContent = t('langToggle');
+  document.getElementById('htmlRoot').lang = LANG_HTML[lang] || 'en';
+  const cur = document.getElementById('langCurrent');
+  if (cur) cur.textContent = LANG_LABELS[lang] || 'EN';
+  document.getElementById('langDropdown')?.classList.add('hidden');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   renderStepNav();
 }
 
-function toggleLang() { setLang(currentLang === 'en' ? 'zh' : 'en'); }
+function toggleLangMenu() {
+  document.getElementById('langDropdown')?.classList.toggle('hidden');
+}
 
 const STEP_LABELS = () => [t('step1Label'), t('step2Label'), t('step3Label'), t('step4Label'), t('step5Label')];
 
 window.addEventListener('DOMContentLoaded', () => {
   setLang(currentLang);
   syncProgress();
+  document.addEventListener('click', e => {
+    const wrap = document.getElementById('langMenuWrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('langDropdown')?.classList.add('hidden');
+    }
+  });
 });
 
 // ── Free-email blocklist ──────────────────────────────────────────────────────
@@ -1552,9 +1685,7 @@ async function autoSubmitToSheets() {
   const email = data.company?.contactEmail || '';
   const wait  = checkRateLimit(email);
   if (wait > 0) {
-    setSubmitBanner('error', currentLang === 'zh'
-      ? `此電子郵件已提交過問卷，請在 ${fmtWait(wait)} 後再試。`
-      : `This email has already been submitted. Please wait ${fmtWait(wait)} before resubmitting.`);
+    setSubmitBanner('error', tFmt('rateLimitUser', { wait: fmtWait(wait) }));
     return;
   }
 
@@ -1602,9 +1733,7 @@ async function submitToSheets() {
   const email = data.company?.contactEmail || '';
   const wait  = checkRateLimit(email);
   if (wait > 0) {
-    showSheetsMsg('error', currentLang === 'zh'
-      ? `⚠️ 此電子郵件已提交，請在 ${fmtWait(wait)} 後再試。`
-      : `⚠️ Already submitted. Please wait ${fmtWait(wait)} before saving again.`);
+    showSheetsMsg('error', tFmt('rateLimitSE', { wait: fmtWait(wait) }));
     return;
   }
 
