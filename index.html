@@ -1261,7 +1261,7 @@ function sendEmail() {
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 }
 
-// ── Download PDF ──────────────────────────────────────────────────────────────
+// ── Download PDF (questionnaire data record) ──────────────────────────────────
 function downloadPDF() {
   const btn = document.getElementById('downloadPdfBtn');
   const origContent = btn.innerHTML;
@@ -1275,117 +1275,142 @@ function downloadPDF() {
     const H = doc.internal.pageSize.getHeight();
     const ml = 40, mr = 40;
     const cW = W - ml - mr;
-    // Strip non-ASCII (emojis, etc.) so standard PDF fonts render cleanly
-    const clean = s => (s || '').replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '').trim();
+    const d = data;
 
-    const recs = data.recommendations || [];
-    const overallScore = Math.round(recs.reduce((a, r) => a + r.s, 0) / Math.max(recs.length, 1));
-    const high = recs.filter(r => r.priority === 'high').length;
-    const med  = recs.filter(r => r.priority === 'medium').length;
-    const low  = recs.filter(r => r.priority === 'low').length;
+    // Strip emojis/non-printable; keep Latin, CJK placeholder shown as-is via jsPDF best effort
+    const safe  = s => (s || '').replace(/[\u{1F000}-\u{1FFFF}]/gu, '').trim();
+    const arr   = a => (a && a.length) ? a.join(', ') : '—';
+    const val   = v => safe(v) || '—';
 
-    // Header bar
+    // ── Header ───────────────────────────────────────────────────────────────
     doc.setFillColor(26, 26, 46);
-    doc.rect(0, 0, W, 50, 'F');
+    doc.rect(0, 0, W, 54, 'F');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(255, 255, 255);
-    doc.text('JFrog Customer Assessment', ml, 32);
+    doc.text('JFrog New Customer Questionnaire', ml, 28);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(64, 190, 70);
-    doc.text(new Date().toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }), W - mr, 32, { align:'right' });
+    doc.text(new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }), W - mr, 28, { align:'right' });
+    doc.setTextColor(165, 170, 190);
+    const subtitle = [safe(d.company.name), safe(d.company.contactEmail)].filter(Boolean).join('  \xB7  ');
+    doc.text(subtitle, ml, 44);
 
     let y = 72;
 
-    // Company name + meta
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.setTextColor(26, 26, 46);
-    doc.text(clean(data.company?.name) || 'Customer', ml, y);
-    y += 15;
-    const meta = [data.company?.industry, data.infrastructure?.devCount ? data.infrastructure.devCount + ' developers' : '', data.infrastructure?.deploymentType].filter(Boolean);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(105, 110, 120);
-    if (meta.length) doc.text(meta.join('  \xB7  '), ml, y);
-    y += 20;
-
-    // Score banner
-    const bannerH = 72;
-    doc.setFillColor(26, 26, 46);
-    doc.roundedRect(ml, y, cW, bannerH, 6, 6, 'F');
-    // Score
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(34); doc.setTextColor(64, 190, 70);
-    doc.text(String(overallScore), W - mr - 12, y + 40, { align:'right' });
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(155, 160, 175);
-    doc.text('fit score', W - mr - 12, y + 52, { align:'right' });
-    // Priority counts
-    const boxW = (cW * 0.56) / 3;
-    [high, med, low].forEach((count, i) => {
-      const cx = ml + 10 + i * (boxW + 8) + boxW / 2;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(24); doc.setTextColor(255, 255, 255);
-      doc.text(String(count), cx, y + 38, { align:'center' });
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(155, 160, 175);
-      doc.text(['High Priority', 'Consider', 'Informational'][i], cx, y + 50, { align:'center' });
-    });
-    y += bannerH + 18;
-
-    // Recommendation cards
-    const prioRGB = { high:[239,68,68], medium:[245,158,11], low:[74,222,128] };
-    for (const r of recs) {
-      const desc        = clean(r.desc);
-      const action      = clean(r.action);
-      const descLines   = doc.splitTextToSize(desc, cW - 20);
-      const actionLines = doc.splitTextToSize(action, cW - 30);
-      const whyH        = r.why?.length ? 18 : 0;
-      const cardH       = 16 + 13 + 6 + descLines.length * 12 + whyH + actionLines.length * 12 + 22;
-
-      if (y + cardH > H - 50) { doc.addPage(); y = 40; }
-
-      doc.setFillColor(255, 255, 255); doc.setDrawColor(220, 224, 232);
-      doc.roundedRect(ml, y, cW, cardH, 4, 4, 'FD');
-      const pc = prioRGB[r.priority] || prioRGB.low;
-      doc.setFillColor(...pc);
-      doc.roundedRect(ml, y, 4, cardH, 2, 2, 'F');
-
-      let cy = y + 16;
-      // Product + score
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(26, 26, 46);
-      doc.text(clean(r.product), ml + 12, cy);
-      doc.setTextColor(64, 190, 70);
-      doc.text(String(r.s), W - mr - 8, cy, { align:'right' });
-      cy += 13;
-      // Category
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 155, 168);
-      doc.text(clean(r.cat), ml + 12, cy);
-      cy += 14;
-      // Description
-      doc.setFontSize(9); doc.setTextColor(70, 75, 90);
-      doc.text(descLines, ml + 12, cy);
-      cy += descLines.length * 12 + 4;
-      // Why tags
-      if (r.why?.length) {
-        doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(125, 130, 142);
-        doc.text('Based on: ' + r.why.map(clean).join(', '), ml + 12, cy);
-        cy += 16;
-      }
-      // Action box
-      const aBoxH = actionLines.length * 12 + 12;
-      doc.setFillColor(239, 246, 255); doc.roundedRect(ml + 8, cy, cW - 16, aBoxH, 3, 3, 'F');
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(59, 130, 246);
-      const label = 'Next Step: ';
-      doc.text(label, ml + 13, cy + 9);
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(37, 99, 235);
-      doc.text(actionLines[0] || '', ml + 13 + doc.getTextWidth(label), cy + 9);
-      for (let i = 1; i < actionLines.length; i++) doc.text(actionLines[i], ml + 13, cy + 9 + i * 12);
-
-      y += cardH + 8;
+    // ── Section / field helpers ───────────────────────────────────────────────
+    function section(title) {
+      if (y > H - 100) { doc.addPage(); y = 40; }
+      doc.setFillColor(241, 243, 249);
+      doc.rect(ml, y, cW, 21, 'F');
+      doc.setFillColor(64, 190, 70);
+      doc.rect(ml, y, 3, 21, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(26, 26, 46);
+      doc.text(title, ml + 10, y + 14);
+      y += 27;
     }
 
-    // Footer on every page
+    const LABEL_W = 145;
+    function field(label, value) {
+      const lines = doc.splitTextToSize(value, cW - LABEL_W - 8);
+      const rowH  = Math.max(18, lines.length * 12 + 6);
+      if (y + rowH > H - 46) { doc.addPage(); y = 40; }
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(120, 126, 142);
+      doc.text(label, ml + 6, y + 12);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(26, 26, 46);
+      doc.text(lines, ml + LABEL_W, y + 12);
+      doc.setDrawColor(232, 234, 240);
+      doc.line(ml, y + rowH, ml + cW, y + rowH);
+      y += rowH + 1;
+    }
+
+    // ── Company Information ───────────────────────────────────────────────────
+    section('COMPANY INFORMATION');
+    field('Company Name',    val(d.company.name));
+    field('Industry',        val(d.company.industry));
+    field('Contact Name',    val(d.company.contactName));
+    field('Contact Email',   val(d.company.contactEmail));
+
+    y += 8;
+
+    // ── Infrastructure ────────────────────────────────────────────────────────
+    section('INFRASTRUCTURE');
+    field('Developer Count',   val(d.infrastructure.devCount));
+    if (d.infrastructure.devCountNote)
+      field('Count Details',   safe(d.infrastructure.devCountNote));
+    field('Data Center Sites', arr(d.infrastructure.dataCenterSites));
+    field('Deployment Type',   val(d.infrastructure.deploymentType));
+    field('Current Storage',   val(d.infrastructure.storageCurrentGB));
+    field('Existing Repo Tools', d.infrastructure.existingTools?.length
+      ? arr(d.infrastructure.existingTools) : 'None / First deployment');
+
+    y += 8;
+
+    // ── Security & Packages ───────────────────────────────────────────────────
+    section('SECURITY & PACKAGE TYPES');
+    field('Security Tools',       arr(d.security.toolsInUse));
+    if (d.security.toolsOther)
+      field('Other Security Tools', safe(d.security.toolsOther));
+    field('Compliance',           val(d.security.compliance));
+    field('Package Types (Now)',  arr(d.packages.currentTypes));
+    field('Package Types (Plan)', arr(d.packages.plannedTypes));
+
+    y += 8;
+
+    // ── Pain Points & Objectives ──────────────────────────────────────────────
+    section('PAIN POINTS & OBJECTIVES');
+    field('Pain Points',   arr(d.painPoints.pains));
+    field('Objectives',    arr(d.painPoints.objectives));
+    field('Timeline',      val(d.painPoints.timeline));
+    field('Budget Range',  val(d.painPoints.budget));
+    if (d.painPoints.freeText)
+      field('Additional Notes', safe(d.painPoints.freeText));
+
+    y += 14;
+
+    // ── Fit Score Summary (compact) ───────────────────────────────────────────
+    const recs = d.recommendations || [];
+    if (recs.length) {
+      const score = Math.round(recs.reduce((a, r) => a + r.s, 0) / recs.length);
+      const hi  = recs.filter(r => r.priority === 'high').map(r => r.product).join(', ') || '—';
+      const med = recs.filter(r => r.priority === 'medium').map(r => r.product).join(', ') || '—';
+
+      if (y + 76 > H - 46) { doc.addPage(); y = 40; }
+
+      doc.setFillColor(26, 26, 46);
+      doc.roundedRect(ml, y, cW, 74, 5, 5, 'F');
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(175, 180, 200);
+      doc.text('JFrog FIT SCORE', ml + 12, y + 18);
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(30); doc.setTextColor(64, 190, 70);
+      doc.text(String(score), W - mr - 12, y + 42, { align:'right' });
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(130, 135, 155);
+      doc.text('/ 100', W - mr - 12, y + 54, { align:'right' });
+
+      const hiLines  = doc.splitTextToSize(hi,  cW - 145);
+      const medLines = doc.splitTextToSize(med, cW - 145);
+
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(160, 165, 185);
+      doc.text('High Priority:', ml + 12, y + 36);
+      doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 255, 255);
+      doc.text(hiLines[0], ml + 105, y + 36);
+
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(160, 165, 185);
+      doc.text('Consider:', ml + 12, y + 52);
+      doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 255, 255);
+      doc.text(medLines[0], ml + 105, y + 52);
+    }
+
+    // ── Footer ────────────────────────────────────────────────────────────────
     const totalPages = doc.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
       doc.setPage(p);
       doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(180, 185, 195);
-      doc.text('JFrog Customer Questionnaire  \xB7  jfrog.com', W / 2, H - 22, { align:'center' });
-      if (totalPages > 1) doc.text(`${p} / ${totalPages}`, W - mr, H - 22, { align:'right' });
+      doc.text('JFrog New Customer Questionnaire  \xB7  Confidential', W / 2, H - 20, { align:'center' });
+      if (totalPages > 1) doc.text(`${p} / ${totalPages}`, W - mr, H - 20, { align:'right' });
     }
 
-    const slug = (data.company?.name || 'unknown').replace(/\s+/g, '-');
-    doc.save(`jfrog-questionnaire-${slug}-${new Date().toISOString().slice(0,10)}.pdf`);
+    const slug = (d.company.name || 'unknown').replace(/[\s\/\\]/g, '-');
+    doc.save(`jfrog-questionnaire-${slug}-${new Date().toISOString().slice(0, 10)}.pdf`);
+
   } catch(e) {
     console.error('PDF error:', e);
   }
