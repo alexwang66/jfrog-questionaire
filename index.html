@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JFrog New Customer Questionnaire</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 tailwind.config = {
   theme: {
@@ -555,10 +556,10 @@ tailwind.config = {
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
         <span data-i18n="r5CopyBtn">Copy Summary</span>
       </button>
-      <button onclick="downloadJSON()"
+      <button id="downloadPdfBtn" onclick="downloadPDF()"
         class="flex-1 min-w-[140px] border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        <span data-i18n="r5DownloadBtn">Download JSON</span>
+        <span data-i18n="r5DownloadBtn">Download PDF</span>
       </button>
       <button onclick="location.reload()"
         class="border border-gray-200 text-gray-400 px-4 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
@@ -672,7 +673,7 @@ const LANGS = {
     s4Submit:'Submit',
     r5Title:'JFrog Recommendations', r5Subtitle:'Based on your responses, here is a tailored JFrog solution overview.',
     r5FitScore:'fit score', r5HighPriority:'high priority', r5Consider:'consider', r5Informational:'informational',
-    r5CopyBtn:'Copy Summary', r5DownloadBtn:'Download JSON', r5NewBtn:'New',
+    r5CopyBtn:'Copy Summary', r5DownloadBtn:'Download PDF', r5NewBtn:'New',
     navBack:'Back', rcHigh:'High Priority', rcMed:'Consider', rcLow:'Informational',
     rcNextStep:'Suggested next step:',
     errCompanyRequired:'Company name is required.', errEmailRequired:'Contact email is required.',
@@ -680,7 +681,7 @@ const LANGS = {
     bannerNoUrl:'Thank you! Your assessment is complete. Use the options below to save a copy.',
     bannerLoading:'Submitting your response…',
     bannerSuccess:'Your response has been submitted successfully. Thank you!',
-    bannerError:'Submission failed — please use "Copy Summary" or "Download JSON" to save your results.',
+    bannerError:'Submission failed — please use "Copy Summary" or "Download PDF" to save your results.',
     moreCn:'+ More CN cities', hideCn:'− Hide CN cities',
     moreApac:'+ More APAC', hideApac:'− Hide APAC',
   },
@@ -721,7 +722,7 @@ const LANGS = {
     s4Submit:'提交問卷',
     r5Title:'JFrog 解決方案推薦', r5Subtitle:'根據您的填答，以下是針對貴公司量身打裁的 JFrog 解決方案概覽。',
     r5FitScore:'契合分數', r5HighPriority:'高優先', r5Consider:'建議考慮', r5Informational:'參考資訊',
-    r5CopyBtn:'複製摘要', r5DownloadBtn:'下載 JSON', r5NewBtn:'重新填寫',
+    r5CopyBtn:'複製摘要', r5DownloadBtn:'下載 PDF', r5NewBtn:'重新填寫',
     navBack:'上一步', rcHigh:'高優先', rcMed:'建議考慮', rcLow:'參考資訊',
     rcNextStep:'建議行動：',
     errCompanyRequired:'請填寫公司名稱。', errEmailRequired:'請填寫工作電子郵件。',
@@ -729,7 +730,7 @@ const LANGS = {
     bannerNoUrl:'感謝您完成問卷！請使用下方選項儲存副本。',
     bannerLoading:'正在提交問卷，請稍候…',
     bannerSuccess:'問卷已成功提交，感謝您！',
-    bannerError:'提交失敗，請使用「複製摘要」或「下載 JSON」儲存結果。',
+    bannerError:'提交失敗，請使用「複製摘要」或「下載 PDF」儲存結果。',
     moreCn:'+ 更多中國城市', hideCn:'− 隱藏中國城市',
     moreApac:'+ 更多亞太城市', hideApac:'− 隱藏亞太城市',
   }
@@ -1257,12 +1258,32 @@ function sendEmail() {
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 }
 
-// ── Download JSON ─────────────────────────────────────────────────────────────
-function downloadJSON() {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type:'application/json'}));
-  a.download = `jfrog-questionnaire-${(data.company?.name||'unknown').replace(/\s+/g,'-')}-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
+// ── Download PDF ──────────────────────────────────────────────────────────────
+function downloadPDF() {
+  const btn = document.getElementById('downloadPdfBtn');
+  const origContent = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> <span>Generating…</span>`;
+
+  const actionsEl = document.querySelector('#step5 .bg-white.rounded-2xl');
+  actionsEl.style.display = 'none';
+
+  const el = document.getElementById('step5');
+  const companySlug = (data.company?.name || 'unknown').replace(/\s+/g, '-');
+  const dateStr = new Date().toISOString().slice(0, 10);
+
+  const restore = () => {
+    actionsEl.style.display = '';
+    btn.disabled = false;
+    btn.innerHTML = origContent;
+  };
+
+  html2pdf().set({
+    margin: [8, 8, 8, 8],
+    filename: `jfrog-questionnaire-${companySlug}-${dateStr}.pdf`,
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(el).save().then(restore).catch(restore);
 }
 
 // ── Google Sheets Integration ─────────────────────────────────────────────────
