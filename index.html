@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html id="htmlRoot" lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,11 +63,12 @@ tailwind.config = {
         </svg>
         <div>
           <div class="font-bold text-gray-800 text-sm leading-tight">JFrog</div>
-          <div class="text-gray-400 text-xs leading-tight">New Customer Questionnaire</div>
+          <div data-i18n="appSubtitle" class="text-gray-400 text-xs leading-tight">New Customer Questionnaire</div>
         </div>
       </div>
       <!-- Mobile: step counter -->
       <div id="stepLabel" class="sm:hidden text-xs font-medium text-gray-400"></div>
+      <button id="langToggleBtn" onclick="toggleLang()" class="text-xs font-medium text-gray-400 hover:text-jfrog-green border border-gray-200 hover:border-jfrog-green px-2.5 py-1 rounded-full transition-colors">中文</button>
     </div>
   </div>
   <!-- Progress bar -->
@@ -83,22 +84,22 @@ tailwind.config = {
 <!-- ───────────────── STEP 1 — Company Info ───────────────── -->
 <div class="step active" id="step1">
   <div class="mb-7">
-    <div class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 1 of 4</div>
-    <h1 class="text-2xl font-bold text-gray-800">Company Information</h1>
-    <p class="text-gray-500 text-sm mt-1">Tell us about your organization so we can tailor the right solution.</p>
+    <div data-i18n="step1Badge" class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 1 of 4</div>
+    <h1 data-i18n="s1Title" class="text-2xl font-bold text-gray-800">Company Information</h1>
+    <p data-i18n="s1Subtitle" class="text-gray-500 text-sm mt-1">Tell us about your organization so we can tailor the right solution.</p>
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Company Name <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-semibold text-gray-700 mb-1"><span data-i18n="s1CompanyLabel">Company Name</span> <span class="text-red-500">*</span></label>
         <input id="companyName" type="text" placeholder="e.g. Acme Corp"
           class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm"
           oninput="clearFieldErr('companyNameErr')">
         <p id="companyNameErr" class="hidden mt-1 text-xs text-red-500"></p>
       </div>
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Industry</label>
+        <label data-i18n="s1IndustryLabel" class="block text-sm font-semibold text-gray-700 mb-1">Industry</label>
         <select id="industry" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
           <option value="">Select…</option>
           <option>Finance / Banking / Insurance</option>
@@ -113,12 +114,12 @@ tailwind.config = {
         </select>
       </div>
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Name</label>
+        <label data-i18n="s1ContactNameLabel" class="block text-sm font-semibold text-gray-700 mb-1">Contact Name</label>
         <input id="contactName" type="text" placeholder="e.g. John Smith"
           class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Email <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-semibold text-gray-700 mb-1"><span data-i18n="s1ContactEmailLabel">Contact Email</span> <span class="text-red-500">*</span></label>
         <input id="contactEmail" type="email" placeholder="john@company.com"
           class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm"
           oninput="validateEmailField()">
@@ -128,10 +129,8 @@ tailwind.config = {
 
     <!-- Q: Developer Count -->
     <div class="pt-2 border-t border-gray-100">
-      <label class="block text-sm font-semibold text-gray-800 mb-0.5">
-        How many developers (and other users) will access the JFrog Platform?
-      </label>
-      <p class="text-xs text-gray-400 mb-3">e.g. "Approximately 500 developers will require access."</p>
+      <label data-i18n="s1DevCountLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">How many developers (and other users) will access the JFrog Platform?</label>
+      <p data-i18n="s1DevCountHint" class="text-xs text-gray-400 mb-3">e.g. "Approximately 500 developers will require access."</p>
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div class="rcard"><input type="radio" name="devCount" id="dc1" value="1–50" class="hidden"><label for="dc1" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">1 – 50</div></label></div>
         <div class="rcard"><input type="radio" name="devCount" id="dc2" value="51–200" class="hidden"><label for="dc2" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">51 – 200</div></label></div>
@@ -139,7 +138,7 @@ tailwind.config = {
         <div class="rcard"><input type="radio" name="devCount" id="dc4" value="1000+" class="hidden"><label for="dc4" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">1,000+</div></label></div>
       </div>
       <div class="mt-2">
-        <input id="devCountNote" type="text" placeholder="Additional details (e.g. 500 devs + 50 DevOps engineers)"
+        <input id="devCountNote" type="text" data-i18n-ph="s1DevCountNotePh" placeholder="Additional details (e.g. 500 devs + 50 DevOps engineers)"
           class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
       </div>
     </div>
@@ -147,7 +146,7 @@ tailwind.config = {
 
   <div class="mt-5 flex justify-end">
     <button onclick="nextStep(1)" class="bg-jfrog-green text-white px-7 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center gap-2">
-      Next: Infrastructure
+      <span data-i18n="s1Next">Next: Infrastructure</span>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </button>
   </div>
@@ -156,17 +155,17 @@ tailwind.config = {
 <!-- ───────────────── STEP 2 — Infrastructure ───────────────── -->
 <div class="step" id="step2">
   <div class="mb-7">
-    <div class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 2 of 4</div>
+    <div data-i18n="step2Badge" class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 2 of 4</div>
     <h1 class="text-2xl font-bold text-gray-800">Infrastructure & Storage</h1>
-    <p class="text-gray-500 text-sm mt-1">Help us understand your data center footprint and artifact storage needs.</p>
+    <p data-i18n="s2Subtitle" class="text-gray-500 text-sm mt-1">Help us understand your data center footprint and artifact storage needs.</p>
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
 
     <!-- Q1: Data Center Locations -->
     <div>
-      <label class="block text-sm font-semibold text-gray-800 mb-0.5">Where are your data centers located?</label>
-      <p class="text-xs text-gray-400 mb-3">Enter each data center city/site individually. e.g. "Tokyo, Osaka, New York"</p>
+      <label data-i18n="s2DcLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">Where are your data centers located?</label>
+      <p data-i18n="s2DcHint" class="text-xs text-gray-400 mb-3">Enter each data center city/site individually. e.g. "Tokyo, Osaka, New York"</p>
 
       <!-- Tag input box -->
       <div id="dcTagBox"
@@ -174,7 +173,7 @@ tailwind.config = {
         class="min-h-[44px] w-full border border-gray-200 rounded-lg px-2 py-1.5 flex flex-wrap gap-1.5 cursor-text focus-within:border-jfrog-green focus-within:shadow-[0_0_0_3px_rgba(64,190,70,0.15)] transition-all">
         <div id="dcTags" class="contents"></div>
         <input id="dcInput" type="text"
-          placeholder="Type a city and press Enter…"
+          data-i18n-ph="s2DcPh" placeholder="Type a city and press Enter…"
           class="flex-1 min-w-[160px] border-0 outline-none text-sm bg-transparent py-0.5 px-1 placeholder-gray-300"
           onkeydown="dcInputKey(event)"
           oninput="dcShowSuggestions(this.value)">
@@ -187,7 +186,7 @@ tailwind.config = {
 
       <!-- Quick-add — grouped by region -->
       <div class="mt-3 space-y-2">
-        <div class="text-xs text-gray-400">Quick add:</div>
+        <div data-i18n="s2QuickAdd" class="text-xs text-gray-400">Quick add:</div>
 
         <!-- China Tier-1 (always visible) -->
         <div class="flex flex-wrap items-center gap-1.5">
@@ -275,18 +274,18 @@ tailwind.config = {
 
     <!-- Deployment Type -->
     <div>
-      <label class="block text-sm font-semibold text-gray-800 mb-3">Deployment preference</label>
+      <label data-i18n="s2DeployLabel" class="block text-sm font-semibold text-gray-800 mb-3">Deployment preference</label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        <div class="rcard"><input type="radio" name="deployType" id="dep1" value="Cloud (SaaS)" class="hidden"><label for="dep1" class="border-2 border-gray-200 rounded-xl p-3 cursor-pointer block hover:border-jfrog-green transition-colors text-center"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-800">☁️ Cloud (SaaS)</div><div class="text-xs text-gray-400 mt-0.5">JFrog-managed</div></label></div>
-        <div class="rcard"><input type="radio" name="deployType" id="dep2" value="Self-Hosted" class="hidden"><label for="dep2" class="border-2 border-gray-200 rounded-xl p-3 cursor-pointer block hover:border-jfrog-green transition-colors text-center"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-800">🏠 Self-Hosted</div><div class="text-xs text-gray-400 mt-0.5">On-premise / private cloud</div></label></div>
-        <div class="rcard"><input type="radio" name="deployType" id="dep3" value="Hybrid" class="hidden"><label for="dep3" class="border-2 border-gray-200 rounded-xl p-3 cursor-pointer block hover:border-jfrog-green transition-colors text-center"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-800">🔀 Hybrid</div><div class="text-xs text-gray-400 mt-0.5">Mix of both</div></label></div>
+        <div class="rcard"><input type="radio" name="deployType" id="dep1" value="Cloud (SaaS)" class="hidden"><label for="dep1" class="border-2 border-gray-200 rounded-xl p-3 cursor-pointer block hover:border-jfrog-green transition-colors text-center"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-800">☁️ Cloud (SaaS)</div><div data-i18n="s2CloudDesc" class="text-xs text-gray-400 mt-0.5">JFrog-managed</div></label></div>
+        <div class="rcard"><input type="radio" name="deployType" id="dep2" value="Self-Hosted" class="hidden"><label for="dep2" class="border-2 border-gray-200 rounded-xl p-3 cursor-pointer block hover:border-jfrog-green transition-colors text-center"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-800">🏠 Self-Hosted</div><div data-i18n="s2SelfHostedDesc" class="text-xs text-gray-400 mt-0.5">On-premise / private cloud</div></label></div>
+        <div class="rcard"><input type="radio" name="deployType" id="dep3" value="Hybrid" class="hidden"><label for="dep3" class="border-2 border-gray-200 rounded-xl p-3 cursor-pointer block hover:border-jfrog-green transition-colors text-center"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-800">🔀 Hybrid</div><div data-i18n="s2HybridDesc" class="text-xs text-gray-400 mt-0.5">Mix of both</div></label></div>
       </div>
     </div>
 
     <!-- Q2: Storage -->
     <div class="pt-2 border-t border-gray-100">
-      <label class="block text-sm font-semibold text-gray-800 mb-0.5">What is your current artifact / package storage footprint (and expected growth)?</label>
-      <p class="text-xs text-gray-400 mb-3">e.g. "We currently store ~2 TB of artifacts in our repository manager."</p>
+      <label data-i18n="s2StorageLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">What is your current artifact / package storage footprint (and expected growth)?</label>
+      <p data-i18n="s2StorageHint" class="text-xs text-gray-400 mb-3">e.g. "We currently store ~2 TB of artifacts in our repository manager."</p>
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
         <div class="rcard"><input type="radio" name="storageNow" id="s1" value="< 500 GB" class="hidden"><label for="s1" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">< 500 GB</div></label></div>
         <div class="rcard"><input type="radio" name="storageNow" id="s2" value="500 GB – 5 TB" class="hidden"><label for="s2" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">500 GB – 5 TB</div></label></div>
@@ -294,7 +293,7 @@ tailwind.config = {
         <div class="rcard"><input type="radio" name="storageNow" id="s4" value="> 50 TB" class="hidden"><label for="s4" class="border-2 border-gray-200 rounded-xl p-3 text-center cursor-pointer block hover:border-jfrog-green transition-colors"><div class="ck justify-center mb-1"><svg class="w-4 h-4 text-jfrog-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><div class="text-xs font-semibold text-gray-700">> 50 TB</div></label></div>
       </div>
       <div class="mt-1">
-        <label class="block text-xs font-medium text-gray-500 mb-2">Current repository manager (select all that apply)</label>
+        <label data-i18n="s2RepoMgrLabel" class="block text-xs font-medium text-gray-500 mb-2">Current repository manager (select all that apply)</label>
         <div class="flex flex-wrap gap-2 mb-2" id="existingToolPills">
           <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">None / First deployment</span>
           <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Sonatype Nexus (OSS)</span>
@@ -308,7 +307,7 @@ tailwind.config = {
           <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Google Artifact Registry</span>
           <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">JFrog Container Registry (JCR)</span>
         </div>
-        <input id="existingToolOther" type="text" placeholder="Other tools not listed above…"
+        <input id="existingToolOther" type="text" data-i18n-ph="s2OtherPh" placeholder="Other tools not listed above…"
           class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
       </div>
     </div>
@@ -317,7 +316,7 @@ tailwind.config = {
 
   <div class="mt-5 flex justify-between">
     <button onclick="prevStep(2)" class="text-gray-500 px-5 py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-colors flex items-center gap-2">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Back
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> <span data-i18n="navBack">Back</span>
     </button>
     <button onclick="nextStep(2)" class="bg-jfrog-green text-white px-7 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center gap-2">
       Next: Security & Packages
@@ -329,17 +328,17 @@ tailwind.config = {
 <!-- ───────────────── STEP 3 — Security & Packages ───────────────── -->
 <div class="step" id="step3">
   <div class="mb-7">
-    <div class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 3 of 4</div>
+    <div data-i18n="step3Badge" class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 3 of 4</div>
     <h1 class="text-2xl font-bold text-gray-800">Security Tools & Package Types</h1>
-    <p class="text-gray-500 text-sm mt-1">Understanding your current toolchain and package ecosystem.</p>
+    <p data-i18n="s3Subtitle" class="text-gray-500 text-sm mt-1">Understanding your current toolchain and package ecosystem.</p>
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
 
     <!-- Q: Security Tools -->
     <div>
-      <label class="block text-sm font-semibold text-gray-800 mb-0.5">Which security scanning tools are currently used in your SDLC?</label>
-      <p class="text-xs text-gray-400 mb-3">Include SCA, container scanning, secrets detection, SAST, DAST, etc. e.g. "We use Black Duck and Snyk."</p>
+      <label data-i18n="s3SecLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">Which security scanning tools are currently used in your SDLC?</label>
+      <p data-i18n="s3SecHint" class="text-xs text-gray-400 mb-3">Include SCA, container scanning, secrets detection, SAST, DAST, etc. e.g. "We use Black Duck and Snyk."</p>
       <div class="flex flex-wrap gap-2 mb-3" id="secToolPills">
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Black Duck</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Snyk</span>
@@ -354,21 +353,21 @@ tailwind.config = {
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">OWASP Dependency-Check</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">None currently</span>
       </div>
-      <input id="secToolOther" type="text" placeholder="Other tools not listed above…"
+      <input id="secToolOther" type="text" data-i18n-ph="s3OtherPh" placeholder="Other tools not listed above…"
         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
       <div class="mt-3">
-        <label class="block text-xs font-medium text-gray-500 mb-1">Any compliance requirements? (SOC 2, ISO 27001, PCI DSS, HIPAA, etc.)</label>
-        <input id="compliance" type="text" placeholder="e.g. SOC 2 Type II, ISO 27001"
+        <label data-i18n="s3ComplianceLabel" class="block text-xs font-medium text-gray-500 mb-1">Any compliance requirements? (SOC 2, ISO 27001, PCI DSS, HIPAA, etc.)</label>
+        <input id="compliance" type="text" data-i18n-ph="s3CompliancePh" placeholder="e.g. SOC 2 Type II, ISO 27001"
           class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
       </div>
     </div>
 
     <!-- Q: Package Types -->
     <div class="pt-2 border-t border-gray-100">
-      <label class="block text-sm font-semibold text-gray-800 mb-0.5">Which package types are in use today, and which do you plan to add?</label>
-      <p class="text-xs text-gray-400 mb-3">e.g. "Maven, Docker, and npm." Select current use; mark planned separately below.</p>
+      <label data-i18n="s3PkgLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">Which package types are in use today, and which do you plan to add?</label>
+      <p data-i18n="s3PkgHint" class="text-xs text-gray-400 mb-3">e.g. "Maven, Docker, and npm." Select current use; mark planned separately below.</p>
 
-      <div class="text-xs font-medium text-gray-500 mb-2">Currently in use:</div>
+      <div data-i18n="s3PkgCurrentLabel" class="text-xs font-medium text-gray-500 mb-2">Currently in use:</div>
       <div class="flex flex-wrap gap-2 mb-4" id="pkgCurrentPills">
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Docker / OCI</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Maven / Java</span>
@@ -384,7 +383,7 @@ tailwind.config = {
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Terraform</span>
       </div>
 
-      <div class="text-xs font-medium text-gray-500 mb-2">Planned to add (future):</div>
+      <div data-i18n="s3PkgPlannedLabel" class="text-xs font-medium text-gray-500 mb-2">Planned to add (future):</div>
       <div class="flex flex-wrap gap-2 mb-3" id="pkgPlannedPills">
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Docker / OCI</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Maven / Java</span>
@@ -402,10 +401,10 @@ tailwind.config = {
 
   <div class="mt-5 flex justify-between">
     <button onclick="prevStep(3)" class="text-gray-500 px-5 py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-colors flex items-center gap-2">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Back
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> <span data-i18n="navBack">Back</span>
     </button>
     <button onclick="nextStep(3)" class="bg-jfrog-green text-white px-7 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center gap-2">
-      Next: Pain Points
+      <span data-i18n="s3Next">Next: Pain Points</span>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </button>
   </div>
@@ -414,17 +413,17 @@ tailwind.config = {
 <!-- ───────────────── STEP 4 — Pain Points ───────────────── -->
 <div class="step" id="step4">
   <div class="mb-7">
-    <div class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 4 of 4</div>
+    <div data-i18n="step4Badge" class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Step 4 of 4</div>
     <h1 class="text-2xl font-bold text-gray-800">Pain Points & Objectives</h1>
-    <p class="text-gray-500 text-sm mt-1">What challenges are you trying to solve?</p>
+    <p data-i18n="s4Subtitle" class="text-gray-500 text-sm mt-1">What challenges are you trying to solve?</p>
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
 
     <!-- Q: Pain Points -->
     <div>
-      <label class="block text-sm font-semibold text-gray-800 mb-0.5">What are your primary pain points?</label>
-      <p class="text-xs text-gray-400 mb-3">e.g. "Our Nexus repository is slow and represents a single point of failure."</p>
+      <label data-i18n="s4PainLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">What are your primary pain points?</label>
+      <p data-i18n="s4PainHint" class="text-xs text-gray-400 mb-3">e.g. "Our Nexus repository is slow and represents a single point of failure."</p>
       <div class="flex flex-wrap gap-2 mb-3" id="painPills">
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Performance / slow build downloads</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Single point of failure / HA</span>
@@ -442,7 +441,7 @@ tailwind.config = {
 
     <!-- Q: Objectives / Timeline -->
     <div class="pt-2 border-t border-gray-100">
-      <label class="block text-sm font-semibold text-gray-800 mb-3">Primary objectives for adopting JFrog</label>
+      <label data-i18n="s4ObjLabel" class="block text-sm font-semibold text-gray-800 mb-3">Primary objectives for adopting JFrog</label>
       <div class="flex flex-wrap gap-2 mb-4" id="objPills">
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Unified artifact management</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Software supply chain security</span>
@@ -458,7 +457,7 @@ tailwind.config = {
     <!-- Timeline -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Evaluation / purchase timeline</label>
+        <label data-i18n="s4TimelineLabel" class="block text-sm font-semibold text-gray-700 mb-1">Evaluation / purchase timeline</label>
         <select id="timeline" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
           <option value="">Select…</option>
           <option>Immediate (within 1 month)</option>
@@ -469,7 +468,7 @@ tailwind.config = {
         </select>
       </div>
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Budget range (optional)</label>
+        <label data-i18n="s4BudgetLabel" class="block text-sm font-semibold text-gray-700 mb-1">Budget range (optional)</label>
         <select id="budget" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
           <option value="">Prefer not to say</option>
           <option>< $50K / year</option>
@@ -482,8 +481,8 @@ tailwind.config = {
 
     <!-- Free text -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Anything else we should know?</label>
-      <textarea id="freeText" rows="3" placeholder="Describe your situation, migration source, special requirements, or anything not covered above…"
+      <label data-i18n="s4FreeTextLabel" class="block text-sm font-semibold text-gray-700 mb-1">Anything else we should know?</label>
+      <textarea id="freeText" rows="3" data-i18n-ph="s4FreeTextPh" placeholder="Describe your situation, migration source, special requirements, or anything not covered above…"
         class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm resize-none"></textarea>
     </div>
 
@@ -491,11 +490,11 @@ tailwind.config = {
 
   <div class="mt-5 flex justify-between">
     <button onclick="prevStep(4)" class="text-gray-500 px-5 py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-colors flex items-center gap-2">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Back
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> <span data-i18n="navBack">Back</span>
     </button>
     <button onclick="generateResults()" class="bg-jfrog-green text-white px-8 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center gap-2">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-      Submit
+      <span data-i18n="s4Submit">Submit</span>
     </button>
   </div>
 </div>
@@ -503,9 +502,9 @@ tailwind.config = {
 <!-- ───────────────── STEP 5 — Results ───────────────── -->
 <div class="step" id="step5">
   <div class="mb-6">
-    <div class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Results</div>
-    <h1 class="text-2xl font-bold text-gray-800">JFrog Recommendations</h1>
-    <p class="text-gray-500 text-sm mt-1">Based on your responses, here is a tailored JFrog solution overview.</p>
+    <div data-i18n="r5Badge" class="text-xs font-semibold text-jfrog-green bg-green-50 inline-flex px-3 py-1 rounded-full mb-3">Results</div>
+    <h1 data-i18n="r5Title" class="text-2xl font-bold text-gray-800">JFrog Recommendations</h1>
+    <p data-i18n="r5Subtitle" class="text-gray-500 text-sm mt-1">Based on your responses, here is a tailored JFrog solution overview.</p>
   </div>
 
   <!-- Summary banner -->
@@ -517,21 +516,21 @@ tailwind.config = {
       </div>
       <div class="text-right flex-shrink-0">
         <div class="text-3xl font-bold text-jfrog-green" id="rScore">—</div>
-        <div class="text-xs text-gray-400 mt-0.5">fit score</div>
+        <div data-i18n="r5FitScore" class="text-xs text-gray-400 mt-0.5">fit score</div>
       </div>
     </div>
     <div class="grid grid-cols-3 gap-3 mt-5">
       <div class="bg-white/10 rounded-xl p-3 text-center">
         <div class="font-bold text-lg" id="rHigh">0</div>
-        <div class="text-xs text-gray-300">high priority</div>
+        <div data-i18n="r5HighPriority" class="text-xs text-gray-300">high priority</div>
       </div>
       <div class="bg-white/10 rounded-xl p-3 text-center">
         <div class="font-bold text-lg" id="rMed">0</div>
-        <div class="text-xs text-gray-300">consider</div>
+        <div data-i18n="r5Consider" class="text-xs text-gray-300">consider</div>
       </div>
       <div class="bg-white/10 rounded-xl p-3 text-center">
         <div class="font-bold text-lg" id="rLow">0</div>
-        <div class="text-xs text-gray-300">informational</div>
+        <div data-i18n="r5Informational" class="text-xs text-gray-300">informational</div>
       </div>
     </div>
   </div>
@@ -554,17 +553,17 @@ tailwind.config = {
       <button onclick="copyResults()" id="copyBtn"
         class="flex-1 min-w-[140px] border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-        Copy Summary
+        <span data-i18n="r5CopyBtn">Copy Summary</span>
       </button>
       <button onclick="downloadJSON()"
         class="flex-1 min-w-[140px] border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        Download JSON
+        <span data-i18n="r5DownloadBtn">Download JSON</span>
       </button>
       <button onclick="location.reload()"
         class="border border-gray-200 text-gray-400 px-4 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        New
+        <span data-i18n="r5NewBtn">New</span>
       </button>
     </div>
     <div id="copyStatus" class="mt-3 hidden"></div>
@@ -629,12 +628,133 @@ tailwind.config = {
 // ── State ─────────────────────────────────────────────────────────────────────
 let step = 1;
 let data = {};
-const FORM_OPEN_TIME = Date.now();   // used to compute durationSeconds on submit
+const FORM_OPEN_TIME = Date.now();
 const visitedSteps = new Set([1]);
 
-const STEP_LABELS = ['Company Info', 'Infrastructure', 'Security & Packages', 'Pain Points', 'Results'];
+// ── i18n ──────────────────────────────────────────────────────────────────────
+let currentLang = localStorage.getItem('jfrog_lang') || 'en';
 
-window.addEventListener('DOMContentLoaded', () => { syncProgress(); renderStepNav(); });
+const LANGS = {
+  en: {
+    appSubtitle:'New Customer Questionnaire', langToggle:'中文',
+    step1Label:'Company Info', step2Label:'Infrastructure', step3Label:'Security & Packages', step4Label:'Pain Points', step5Label:'Results',
+    step1Badge:'Step 1 of 4', step2Badge:'Step 2 of 4', step3Badge:'Step 3 of 4', step4Badge:'Step 4 of 4', r5Badge:'Results',
+    s1Title:'Company Information', s1Subtitle:'Tell us about your organization so we can tailor the right solution.',
+    s1CompanyLabel:'Company Name', s1IndustryLabel:'Industry', s1ContactNameLabel:'Contact Name', s1ContactEmailLabel:'Contact Email',
+    s1DevCountLabel:'How many developers (and other users) will access the JFrog Platform?',
+    s1DevCountHint:'e.g. "Approximately 500 developers will require access."',
+    s1DevCountNotePh:'Additional details (e.g. 500 devs + 50 DevOps engineers)',
+    s1Next:'Next: Infrastructure',
+    s2Title:'Infrastructure & Storage', s2Subtitle:'Help us understand your data center footprint and artifact storage needs.',
+    s2DcLabel:'Where are your data centers located?',
+    s2DcHint:'Enter each data center city/site individually. e.g. "Tokyo, Osaka, New York"',
+    s2DcPh:'Type a city and press Enter…', s2QuickAdd:'Quick add:',
+    s2DeployLabel:'Deployment preference', s2CloudDesc:'JFrog-managed', s2SelfHostedDesc:'On-premise / private cloud', s2HybridDesc:'Mix of both',
+    s2StorageLabel:'What is your current artifact / package storage footprint (and expected growth)?',
+    s2StorageHint:'e.g. "We currently store ~2 TB of artifacts in our repository manager."',
+    s2RepoMgrLabel:'Current repository manager (select all that apply)', s2OtherPh:'Other tools not listed above…',
+    s2Next:'Next: Security & Packages',
+    s3Title:'Security Tools & Package Types', s3Subtitle:'Understanding your current toolchain and package ecosystem.',
+    s3SecLabel:'Which security scanning tools are currently used in your SDLC?',
+    s3SecHint:'Include SCA, container scanning, secrets detection, SAST, DAST, etc. e.g. "We use Black Duck and Snyk."',
+    s3OtherPh:'Other tools not listed above…',
+    s3ComplianceLabel:'Any compliance requirements? (SOC 2, ISO 27001, PCI DSS, HIPAA, etc.)', s3CompliancePh:'e.g. SOC 2 Type II, ISO 27001',
+    s3PkgLabel:'Which package types are in use today, and which do you plan to add?',
+    s3PkgHint:'e.g. "Maven, Docker, and npm." Select current use; mark planned separately below.',
+    s3PkgCurrentLabel:'Currently in use:', s3PkgPlannedLabel:'Planned to add (future):', s3Next:'Next: Pain Points',
+    s4Title:'Pain Points & Objectives', s4Subtitle:'What challenges are you trying to solve?',
+    s4PainLabel:'What are your primary pain points?',
+    s4PainHint:'e.g. "Our Nexus repository is slow and represents a single point of failure."',
+    s4ObjLabel:'Primary objectives for adopting JFrog',
+    s4TimelineLabel:'Evaluation / purchase timeline', s4BudgetLabel:'Budget range (optional)',
+    s4FreeTextLabel:'Anything else we should know?',
+    s4FreeTextPh:'Describe your situation, migration source, special requirements, or anything not covered above…',
+    s4Submit:'Submit',
+    r5Title:'JFrog Recommendations', r5Subtitle:'Based on your responses, here is a tailored JFrog solution overview.',
+    r5FitScore:'fit score', r5HighPriority:'high priority', r5Consider:'consider', r5Informational:'informational',
+    r5CopyBtn:'Copy Summary', r5DownloadBtn:'Download JSON', r5NewBtn:'New',
+    navBack:'Back', rcHigh:'High Priority', rcMed:'Consider', rcLow:'Informational',
+    rcNextStep:'Suggested next step:',
+    errCompanyRequired:'Company name is required.', errEmailRequired:'Contact email is required.',
+    errEmailFree:'Please use your company email address (not a personal/free email).',
+    bannerNoUrl:'Thank you! Your assessment is complete. Use the options below to save a copy.',
+    bannerLoading:'Submitting your response…',
+    bannerSuccess:'Your response has been submitted successfully. Thank you!',
+    bannerError:'Submission failed — please use "Copy Summary" or "Download JSON" to save your results.',
+    moreCn:'+ More CN cities', hideCn:'− Hide CN cities',
+    moreApac:'+ More APAC', hideApac:'− Hide APAC',
+  },
+  zh: {
+    appSubtitle:'新客戶問卷', langToggle:'English',
+    step1Label:'公司資訊', step2Label:'基礎設施', step3Label:'安全與套件', step4Label:'痛點需求', step5Label:'評估結果',
+    step1Badge:'第 1 步，共 4 步', step2Badge:'第 2 步，共 4 步', step3Badge:'第 3 步，共 4 步', step4Badge:'第 4 步，共 4 步', r5Badge:'評估結果',
+    s1Title:'公司基本資訊', s1Subtitle:'請填寫貴公司的基本資訊，以便我們提供最合適的解決方案。',
+    s1CompanyLabel:'公司名稱', s1IndustryLabel:'所屬行業', s1ContactNameLabel:'聯絡人姓名', s1ContactEmailLabel:'工作電子郵件',
+    s1DevCountLabel:'有多少開發工程師（及其他使用者）需要存取 JFrog Platform？',
+    s1DevCountHint:'例如：「約 500 位開發工程師需要存取。」',
+    s1DevCountNotePh:'補充說明（例如：500 位開發人員 + 50 位 DevOps 工程師）',
+    s1Next:'下一步：基礎設施',
+    s2Title:'基礎設施與儲存', s2Subtitle:'協助我們瞭解貴公司的資料中心分佈與製品儲存需求。',
+    s2DcLabel:'貴公司的資料中心位於哪些地點？',
+    s2DcHint:'請逐一輸入資料中心的城市或站點。例如：「東京、大阪、紐約」',
+    s2DcPh:'輸入城市名稱後按 Enter…', s2QuickAdd:'快速新增：',
+    s2DeployLabel:'部署偶好', s2CloudDesc:'JFrog 代管', s2SelfHostedDesc:'地端 / 私有雲', s2HybridDesc:'混合模式',
+    s2StorageLabel:'目前的製品 / 套件儲存量（及預期成長）？',
+    s2StorageHint:'例如：「我們目前在製品倉庫中存放約 2 TB 的製品。」',
+    s2RepoMgrLabel:'目前使用的製品倉庫管理工具（可複選）', s2OtherPh:'其他未列出的工具…',
+    s2Next:'下一步：安全與套件',
+    s3Title:'安全工具與套件類型', s3Subtitle:'了解貴公司目前的工具鏈與套件生態系。',
+    s3SecLabel:'貴公司在 SDLC 中目前使用哪些安全掃描工具？',
+    s3SecHint:'包含 SCA、容器掃描、機密偵測、SAST、DAST 等。例如：「我們使用 Black Duck 和 Snyk。」',
+    s3OtherPh:'其他未列出的工具…',
+    s3ComplianceLabel:'是否有合規要求？（SOC 2、ISO 27001、PCI DSS、HIPAA 等）', s3CompliancePh:'例如：SOC 2 Type II、ISO 27001',
+    s3PkgLabel:'目前使用哪些套件類型，以及計劃新增哪些？',
+    s3PkgHint:'例如：「Maven、Docker 和 npm。」請選擇目前使用的，並在下方另選計劃新增的。',
+    s3PkgCurrentLabel:'目前使用中：', s3PkgPlannedLabel:'計劃新增（未來）：', s3Next:'下一步：痛點需求',
+    s4Title:'痛點與目標', s4Subtitle:'您正在嘗試解決哪些挑戰？',
+    s4PainLabel:'貴公司的主要痛點是什麼？',
+    s4PainHint:'例如：「我們的 Nexus 倉庫速度慢，且存在單點故障風險。」',
+    s4ObjLabel:'採用 JFrog 的主要目標',
+    s4TimelineLabel:'評估 / 採購時程', s4BudgetLabel:'預算範圍（選填）',
+    s4FreeTextLabel:'還有什麼我們應該了解的？',
+    s4FreeTextPh:'請描述您的現況、遷移來源、特殊需求，或以上未洵蓋的任何資訊…',
+    s4Submit:'提交問卷',
+    r5Title:'JFrog 解決方案推薦', r5Subtitle:'根據您的填答，以下是針對貴公司量身打裁的 JFrog 解決方案概覽。',
+    r5FitScore:'契合分數', r5HighPriority:'高優先', r5Consider:'建議考慮', r5Informational:'參考資訊',
+    r5CopyBtn:'複製摘要', r5DownloadBtn:'下載 JSON', r5NewBtn:'重新填寫',
+    navBack:'上一步', rcHigh:'高優先', rcMed:'建議考慮', rcLow:'參考資訊',
+    rcNextStep:'建議行動：',
+    errCompanyRequired:'請填寫公司名稱。', errEmailRequired:'請填寫工作電子郵件。',
+    errEmailFree:'請使用公司電子郵件（不接受個人免費信算）。',
+    bannerNoUrl:'感謝您完成問卷！請使用下方選項儲存副本。',
+    bannerLoading:'正在提交問卷，請稍候…',
+    bannerSuccess:'問卷已成功提交，感謝您！',
+    bannerError:'提交失敗，請使用「複製摘要」或「下載 JSON」儲存結果。',
+    moreCn:'+ 更多中國城市', hideCn:'− 隱藏中國城市',
+    moreApac:'+ 更多亞太城市', hideApac:'− 隱藏亞太城市',
+  }
+};
+
+function t(key) { return LANGS[currentLang]?.[key] ?? LANGS.en[key] ?? key; }
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('jfrog_lang', lang);
+  document.getElementById('htmlRoot').lang = lang === 'zh' ? 'zh-TW' : 'en';
+  document.getElementById('langToggleBtn').textContent = t('langToggle');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  renderStepNav();
+}
+
+function toggleLang() { setLang(currentLang === 'en' ? 'zh' : 'en'); }
+
+const STEP_LABELS = () => [t('step1Label'), t('step2Label'), t('step3Label'), t('step4Label'), t('step5Label')];
+
+window.addEventListener('DOMContentLoaded', () => {
+  setLang(currentLang);
+  syncProgress();
+});
 
 // ── Free-email blocklist ──────────────────────────────────────────────────────
 const FREE_DOMAINS = new Set([
@@ -658,7 +778,7 @@ function validateEmailField() {
   const val = el.value.trim();
   if (!val) { err.classList.add('hidden'); el.classList.remove('border-red-400'); return true; }
   if (isFreeEmail(val)) {
-    err.textContent = 'Please use your company email address (not a personal/free email).';
+    err.textContent = t('errEmailFree');
     err.classList.remove('hidden');
     el.classList.add('border-red-400');
     return false;
@@ -686,14 +806,14 @@ function nextStep(from) {
   if (from === 1) {
     const name = document.getElementById('companyName').value.trim();
     if (!name) {
-      showFieldErr('companyNameErr', 'Company name is required.');
+      showFieldErr('companyNameErr', t('errCompanyRequired'));
       document.getElementById('companyName').focus();
       return;
     }
     clearFieldErr('companyNameErr');
     const email = document.getElementById('contactEmail').value.trim();
     if (!email) {
-      showFieldErr('emailErr', 'Contact email is required.');
+      showFieldErr('emailErr', t('errEmailRequired'));
       document.getElementById('contactEmail').focus();
       return;
     }
@@ -724,7 +844,7 @@ function syncProgress() {
 function renderStepNav() {
   const nav = document.getElementById('stepNav');
   if (!nav) return;
-  nav.innerHTML = STEP_LABELS.map((label, i) => {
+  nav.innerHTML = STEP_LABELS().map((label, i) => {
     const n = i + 1;
     const isCurrent  = n === step;
     const isVisited  = visitedSteps.has(n);
@@ -848,13 +968,13 @@ function toggleCnT2() {
   const row = document.getElementById('cnT2Row');
   const btn = document.getElementById('cnT2Toggle');
   const open = row.classList.toggle('hidden');
-  btn.textContent = open ? '+ More CN cities ▾' : '− Hide CN cities ▴';
+  btn.textContent = open ? t('moreCn') + ' ▾' : t('hideCn') + ' ▴';
 }
 function toggleApacT2() {
   const row = document.getElementById('apacT2Row');
   const btn = document.getElementById('apacT2Toggle');
   const open = row.classList.toggle('hidden');
-  btn.textContent = open ? '+ More APAC ▾' : '− Hide APAC ▴';
+  btn.textContent = open ? t('moreApac') + ' ▾' : t('hideApac') + ' ▴';
 }
 // ── Radio helper ──────────────────────────────────────────────────────────────
 function radioVal(name) { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; }
@@ -1024,7 +1144,7 @@ function generateResults() {
   list.innerHTML = '';
   recs.forEach(r => {
     const pc = r.priority==='high' ? 'text-red-600 bg-red-50' : r.priority==='medium' ? 'text-amber-600 bg-amber-50' : 'text-green-600 bg-green-50';
-    const pl = r.priority==='high' ? 'High Priority' : r.priority==='medium' ? 'Consider' : 'Informational';
+    const pl = r.priority==='high' ? t('rcHigh') : r.priority==='medium' ? t('rcMed') : t('rcLow');
     const bc = r.priority==='high' ? 'bg-red-400' : r.priority==='medium' ? 'bg-amber-400' : 'bg-green-400';
     const card = document.createElement('div');
     card.className = `bg-white rounded-2xl shadow-sm border border-gray-100 p-5 result-border-${r.priority} card-hover`;
@@ -1042,7 +1162,7 @@ function generateResults() {
       <div class="w-full bg-gray-100 rounded-full h-1 mb-3"><div class="score-bar ${bc} h-1 rounded-full" style="width:${r.s}%"></div></div>
       <p class="text-sm text-gray-600 mb-3">${r.desc}</p>
       ${r.why.length ? `<div class="flex flex-wrap gap-1.5 mb-3">${r.why.map(w=>`<span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${w}</span>`).join('')}</div>` : ''}
-      <div class="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2"><span class="text-xs font-semibold text-blue-700">💡 Suggested next step: </span><span class="text-xs text-blue-600">${r.action}</span></div>`;
+      <div class="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2"><span class="text-xs font-semibold text-blue-700">💡 ${t('rcNextStep')} </span><span class="text-xs text-blue-600">${r.action}</span></div>`;
     list.appendChild(card);
   });
 
@@ -1270,18 +1390,20 @@ function fmtWait(secs) {
 async function autoSubmitToSheets() {
   const url = localStorage.getItem(GS_KEY);
   if (!url) {
-    setSubmitBanner('none', 'Thank you! Your assessment is complete. Use the options below to save a copy.');
+    setSubmitBanner('none', t('bannerNoUrl'));
     return;
   }
 
   const email = data.company?.contactEmail || '';
   const wait  = checkRateLimit(email);
   if (wait > 0) {
-    setSubmitBanner('error', `This email has already been submitted. Please wait ${fmtWait(wait)} before resubmitting.`);
+    setSubmitBanner('error', currentLang === 'zh'
+      ? `此電子郵件已提交過問卷，請在 ${fmtWait(wait)} 後再試。`
+      : `This email has already been submitted. Please wait ${fmtWait(wait)} before resubmitting.`);
     return;
   }
 
-  setSubmitBanner('loading', 'Submitting your response…');
+  setSubmitBanner('loading', t('bannerLoading'));
   try {
     await fetch(url, {
       method: 'POST',
@@ -1290,9 +1412,9 @@ async function autoSubmitToSheets() {
       body: JSON.stringify(buildSecurePayload(data))
     });
     markSubmitted(email);
-    setSubmitBanner('success', 'Your response has been submitted successfully. Thank you!');
+    setSubmitBanner('success', t('bannerSuccess'));
   } catch (err) {
-    setSubmitBanner('error', 'Submission failed — please use "Copy Summary" or "Download JSON" to save your results.');
+    setSubmitBanner('error', t('bannerError'));
   }
 }
 
@@ -1320,7 +1442,9 @@ async function submitToSheets() {
   const email = data.company?.contactEmail || '';
   const wait  = checkRateLimit(email);
   if (wait > 0) {
-    showSheetsMsg('error', `⚠️ Already submitted. Please wait ${fmtWait(wait)} before saving again.`);
+    showSheetsMsg('error', currentLang === 'zh'
+      ? `⚠️ 此電子郵件已提交，請在 ${fmtWait(wait)} 後再試。`
+      : `⚠️ Already submitted. Please wait ${fmtWait(wait)} before saving again.`);
     return;
   }
 
