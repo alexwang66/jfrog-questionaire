@@ -6,6 +6,8 @@
 <title>JFrog New Customer Questionnaire</title>
 <link rel="icon" href="https://speedmedia2.jfrog.com/08612fe1-9391-4cf3-ac1a-6dd49c36b276/media.jfrog.com/wp-content/uploads/2019/04/20131046/Jfrog16-1.png">
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 tailwind.config = {
   theme: {
@@ -1421,110 +1423,132 @@ function sendEmail() {
 }
 
 // ── Download PDF (questionnaire data record) ──────────────────────────────────
-function downloadPDF() {
-  const d = data;
-  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const arr = a => (a && a.length) ? a.map(esc).join(', ') : '—';
-  const val = v => esc(v) || '—';
+async function downloadPDF() {
+  const btn = document.getElementById('downloadPdfBtn');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="w-4 h-4 animate-spin inline-block" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Generating…`;
 
-  const recs  = d.recommendations || [];
-  const score = recs.length ? Math.round(recs.reduce((a,r) => a + r.s, 0) / recs.length) : null;
-  const hi    = recs.filter(r => r.priority === 'high').map(r => esc(r.product)).join(', ') || '—';
-  const med   = recs.filter(r => r.priority === 'medium').map(r => esc(r.product)).join(', ') || '—';
-  const dateStr = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+  try {
+    const d = data;
+    const x  = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const av = a => (a&&a.length) ? a.map(x).join(', ') : '—';
+    const v  = s => x(s) || '—';
 
-  const html = `<!DOCTYPE html>
-<html lang="${LANG_HTML[currentLang]||'en'}">
-<head>
-<meta charset="UTF-8">
-<title>JFrog Questionnaire</title>
-<style>
-@page{size:A4;margin:12mm 14mm}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;font-size:9.5pt;color:#1a1a2e;background:#fff}
-.hdr{background:#1a1a2e;color:#fff;padding:10px 14px;border-radius:4px;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
-.hdr h1{font-size:13pt;font-weight:700;color:#fff}
-.hdr .sub{font-size:8pt;color:#a5aabe;margin-top:3px}
-.hdr .dt{font-size:8pt;color:#40be46;white-space:nowrap;padding-left:12px}
-.sec{margin-bottom:12px}
-.sec-ttl{background:#f1f3f9;border-left:3px solid #40be46;padding:5px 8px 5px 10px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1a1a2e}
-table{width:100%;border-collapse:collapse}
-td{padding:5px 8px;font-size:9pt;border-bottom:1px solid #e8eaf0;vertical-align:top}
-td.l{color:#787e8e;width:38%;white-space:nowrap;padding-right:10px}
-.score{background:#1a1a2e;border-radius:6px;padding:12px 14px;color:#fff;margin-top:12px;display:flex;gap:16px;align-items:center}
-.score-n{font-size:30pt;font-weight:700;color:#40be46;min-width:56px;text-align:center;line-height:1}
-.score-m{flex:1;font-size:8.5pt}
-.score-m .ttl{color:#afb4c8;font-weight:700;font-size:9pt;margin-bottom:4px}
-.row{margin-top:4px}
-.row .l{color:#a0a5b9;display:inline}
-.row .v{color:#fff;font-weight:700}
-.ft{margin-top:16px;text-align:center;font-size:7.5pt;color:#b4b9c3}
-@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style>
-</head>
-<body>
-<div class="hdr">
-  <div><h1>JFrog New Customer Questionnaire</h1>
-  <div class="sub">${val(d.company.name)} &middot; ${val(d.company.contactEmail)}</div></div>
-  <div class="dt">${dateStr}</div>
-</div>
-<div class="sec">
-  <div class="sec-ttl">Company Information</div>
-  <table>
-    <tr><td class="l">Company Name</td><td>${val(d.company.name)}</td></tr>
-    <tr><td class="l">Industry</td><td>${val(d.company.industry)}</td></tr>
-    <tr><td class="l">Contact Name</td><td>${val(d.company.contactName)}</td></tr>
-    <tr><td class="l">Contact Email</td><td>${val(d.company.contactEmail)}</td></tr>
-  </table>
-</div>
-<div class="sec">
-  <div class="sec-ttl">Infrastructure</div>
-  <table>
-    <tr><td class="l">Developer Count</td><td>${val(d.infrastructure.devCount)}</td></tr>
-    ${d.infrastructure.devCountNote?`<tr><td class="l">Count Details</td><td>${esc(d.infrastructure.devCountNote)}</td></tr>`:''}
-    <tr><td class="l">Data Center Sites</td><td>${arr(d.infrastructure.dataCenterSites)}</td></tr>
-    <tr><td class="l">Deployment Type</td><td>${val(d.infrastructure.deploymentType)}</td></tr>
-    <tr><td class="l">Current Storage</td><td>${val(d.infrastructure.storageCurrentGB)}</td></tr>
-    <tr><td class="l">Existing Repo Tools</td><td>${d.infrastructure.existingTools?.length?arr(d.infrastructure.existingTools):'None / First deployment'}</td></tr>
-  </table>
-</div>
-<div class="sec">
-  <div class="sec-ttl">Security &amp; Package Types</div>
-  <table>
-    <tr><td class="l">Security Tools</td><td>${arr(d.security.toolsInUse)}</td></tr>
-    ${d.security.toolsOther?`<tr><td class="l">Other Security Tools</td><td>${esc(d.security.toolsOther)}</td></tr>`:''}
-    <tr><td class="l">Compliance</td><td>${val(d.security.compliance)}</td></tr>
-    <tr><td class="l">Package Types (Now)</td><td>${arr(d.packages.currentTypes)}</td></tr>
-    <tr><td class="l">Package Types (Plan)</td><td>${arr(d.packages.plannedTypes)}</td></tr>
-  </table>
-</div>
-<div class="sec">
-  <div class="sec-ttl">Pain Points &amp; Objectives</div>
-  <table>
-    <tr><td class="l">Pain Points</td><td>${arr(d.painPoints.pains)}</td></tr>
-    <tr><td class="l">Objectives</td><td>${arr(d.painPoints.objectives)}</td></tr>
-    <tr><td class="l">Timeline</td><td>${val(d.painPoints.timeline)}</td></tr>
-    <tr><td class="l">Budget Range</td><td>${val(d.painPoints.budget)}</td></tr>
-    ${d.painPoints.freeText?`<tr><td class="l">Additional Notes</td><td>${esc(d.painPoints.freeText)}</td></tr>`:''}
-  </table>
-</div>
-${score!==null?`
-<div class="score">
-  <div class="score-n">${score}</div>
-  <div class="score-m">
-    <div class="ttl">JFrog FIT SCORE</div>
-    <div class="row"><span class="l">High Priority: </span><span class="v">${hi}</span></div>
-    <div class="row"><span class="l">Consider: </span><span class="v">${med}</span></div>
-  </div>
-</div>`:''}
-<div class="ft">JFrog New Customer Questionnaire &middot; Confidential</div>
-<script>window.onload=function(){setTimeout(function(){window.print()},200)}<\/script>
-</body></html>`;
+    const recs  = d.recommendations||[];
+    const score = recs.length ? Math.round(recs.reduce((a,r)=>a+r.s,0)/recs.length) : null;
+    const hi    = recs.filter(r=>r.priority==='high').map(r=>x(r.product)).join(', ')||'—';
+    const med   = recs.filter(r=>r.priority==='medium').map(r=>x(r.product)).join(', ')||'—';
+    const date  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 
-  const w = window.open('', '_blank');
-  if (!w) { alert('Please allow popups for this page, then click Download PDF again.'); return; }
-  w.document.write(html);
-  w.document.close();
+    // ── Off-screen render container (794 px ≈ A4 width at 96 dpi) ───────────
+    const S = 'style';  // shorthand avoids long inline attribute names
+    const W = document.createElement('div');
+    W.setAttribute(S, [
+      'position:absolute','left:-9999px','top:0','width:794px','padding:24px',
+      'background:#fff','color:#1a1a2e',
+      'font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif',
+      'font-size:13px','line-height:1.5','box-sizing:border-box'
+    ].join(';'));
+
+    const sec = (title, rows) => `
+      <div style="margin-bottom:14px">
+        <div style="background:#f1f3f9;border-left:3px solid #40be46;padding:5px 8px 5px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">${title}</div>
+        <table style="width:100%;border-collapse:collapse">${rows.map(([l,r])=>`
+          <tr>
+            <td style="padding:5px 8px;color:#787e8e;width:38%;border-bottom:1px solid #e8eaf0;vertical-align:top;font-size:12px">${l}</td>
+            <td style="padding:5px 8px;border-bottom:1px solid #e8eaf0;vertical-align:top;font-size:13px">${r}</td>
+          </tr>`).join('')}
+        </table>
+      </div>`;
+
+    const infRows = [
+      ['Developer Count', v(d.infrastructure.devCount)],
+      ...(d.infrastructure.devCountNote ? [['Count Details', x(d.infrastructure.devCountNote)]] : []),
+      ['Data Center Sites', av(d.infrastructure.dataCenterSites)],
+      ['Deployment Type', v(d.infrastructure.deploymentType)],
+      ['Current Storage', v(d.infrastructure.storageCurrentGB)],
+      ['Existing Repo Tools', d.infrastructure.existingTools?.length ? av(d.infrastructure.existingTools) : 'None / First deployment'],
+    ];
+    const secRows = [
+      ['Security Tools', av(d.security.toolsInUse)],
+      ...(d.security.toolsOther ? [['Other Security Tools', x(d.security.toolsOther)]] : []),
+      ['Compliance', v(d.security.compliance)],
+      ['Package Types (Now)', av(d.packages.currentTypes)],
+      ['Package Types (Plan)', av(d.packages.plannedTypes)],
+    ];
+    const painRows = [
+      ['Pain Points', av(d.painPoints.pains)],
+      ['Objectives', av(d.painPoints.objectives)],
+      ['Timeline', v(d.painPoints.timeline)],
+      ['Budget Range', v(d.painPoints.budget)],
+      ...(d.painPoints.freeText ? [['Additional Notes', x(d.painPoints.freeText)]] : []),
+    ];
+
+    W.innerHTML = `
+      <div style="background:#1a1a2e;color:#fff;padding:12px 16px;border-radius:4px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:15px;font-weight:700">${x(d.company.name||'JFrog New Customer Questionnaire')}</div>
+          <div style="font-size:11px;color:#a5aabe;margin-top:4px">${v(d.company.name)} &middot; ${v(d.company.contactEmail)}</div>
+        </div>
+        <div style="font-size:11px;color:#40be46;white-space:nowrap;padding-left:12px">${date}</div>
+      </div>
+      ${sec('Company Information',[
+        ['Company Name',v(d.company.name)],['Industry',v(d.company.industry)],
+        ['Contact Name',v(d.company.contactName)],['Contact Email',v(d.company.contactEmail)]
+      ])}
+      ${sec('Infrastructure', infRows)}
+      ${sec('Security &amp; Package Types', secRows)}
+      ${sec('Pain Points &amp; Objectives', painRows)}
+      ${score!==null ? `
+      <div style="background:#1a1a2e;border-radius:6px;padding:14px 16px;display:flex;gap:16px;align-items:center;margin-top:4px">
+        <div style="font-size:32px;font-weight:700;color:#40be46;min-width:56px;text-align:center;line-height:1">${score}</div>
+        <div style="flex:1;font-size:12px">
+          <div style="color:#afb4c8;font-weight:700;font-size:13px;margin-bottom:6px">JFrog FIT SCORE</div>
+          <div style="margin-top:4px"><span style="color:#a0a5b9">High Priority: </span><span style="color:#fff;font-weight:700">${hi}</span></div>
+          <div style="margin-top:4px"><span style="color:#a0a5b9">Consider: </span><span style="color:#fff;font-weight:700">${med}</span></div>
+        </div>
+      </div>` : ''}
+      <div style="margin-top:18px;text-align:center;font-size:10px;color:#b4b9c3">JFrog New Customer Questionnaire &middot; Confidential</div>
+    `;
+
+    document.body.appendChild(W);
+    await document.fonts.ready;
+
+    // ── Render to canvas at 3× for ~288 DPI output ──────────────────────────
+    const canvas = await html2canvas(W, {
+      scale: 3, backgroundColor: '#ffffff',
+      useCORS: false, logging: false,
+      width: 794, windowWidth: 1280,
+    });
+    document.body.removeChild(W);
+
+    // ── Compose PDF (split long canvas across A4 pages) ──────────────────────
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pgW = doc.internal.pageSize.getWidth();
+    const pgH = doc.internal.pageSize.getHeight();
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const imgW = pgW;
+    const imgH = imgW * canvas.height / canvas.width;
+
+    let yOff = 0;
+    while (yOff < imgH) {
+      if (yOff > 0) doc.addPage();
+      doc.addImage(imgData, 'JPEG', 0, -yOff, imgW, imgH, '', 'FAST');
+      yOff += pgH;
+    }
+
+    const slug = (d.company.name||'unknown').replace(/[\s\/\\]/g,'-');
+    doc.save(`jfrog-questionnaire-${slug}-${new Date().toISOString().slice(0,10)}.pdf`);
+
+  } catch(e) {
+    console.error('PDF error:', e);
+    alert('PDF generation failed: ' + e.message);
+  }
+  btn.disabled = false;
+  btn.innerHTML = orig;
 }
 
 // ── Google Sheets Integration ─────────────────────────────────────────────────
