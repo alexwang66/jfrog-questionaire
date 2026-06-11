@@ -373,11 +373,8 @@ tailwind.config = {
 
     <!-- Q: Package Types -->
     <div class="pt-2 border-t border-gray-100">
-      <label data-i18n="s3PkgLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">Which package types are in use today, and which do you plan to add?</label>
-      <p data-i18n="s3PkgHint" class="text-xs text-gray-400 mb-3">e.g. "Maven, Docker, and npm." Select current use; mark planned separately below.</p>
-
-      <div data-i18n="s3PkgCurrentLabel" class="text-xs font-medium text-gray-500 mb-2">Currently in use:</div>
-      <div class="flex flex-wrap gap-2 mb-4" id="pkgCurrentPills">
+      <label data-i18n="s3PkgLabel" class="block text-sm font-semibold text-gray-800 mb-2">Which package types do you use or plan to use?</label>
+      <div class="flex flex-wrap gap-2 mb-3" id="pkgCurrentPills">
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Docker / OCI</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Maven / Java</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">npm / Node.js</span>
@@ -389,18 +386,6 @@ tailwind.config = {
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Cargo / Rust</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">RPM / Debian</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Generic / Binary</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Terraform</span>
-      </div>
-
-      <div data-i18n="s3PkgPlannedLabel" class="text-xs font-medium text-gray-500 mb-2">Planned to add (future):</div>
-      <div class="flex flex-wrap gap-2 mb-3" id="pkgPlannedPills">
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Docker / OCI</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Maven / Java</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">npm / Node.js</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">PyPI / Python</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">NuGet / .NET</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Go Modules</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Helm Charts</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">ML Models (HuggingFace / ONNX)</span>
         <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Terraform</span>
       </div>
@@ -671,9 +656,8 @@ const LANGS = {
     s3SecHint:'Include SCA, container scanning, secrets detection, SAST, DAST, etc. e.g. "We use Black Duck and Snyk."',
     s3OtherPh:'Other tools not listed above…',
     s3ComplianceLabel:'Any compliance requirements? (SOC 2, ISO 27001, PCI DSS, HIPAA, etc.)', s3CompliancePh:'e.g. SOC 2 Type II, ISO 27001',
-    s3PkgLabel:'Which package types are in use today, and which do you plan to add?',
-    s3PkgHint:'e.g. "Maven, Docker, and npm." Select current use; mark planned separately below.',
-    s3PkgCurrentLabel:'Currently in use:', s3PkgPlannedLabel:'Planned to add (future):', s3Next:'Next: Pain Points',
+    s3PkgLabel:'Which package types do you use or plan to use?',
+    s3Next:'Next: Pain Points',
     s4Title:'Pain Points & Objectives', s4Subtitle:'What challenges are you trying to solve?',
     s4PainLabel:'What are your primary pain points?',
     s4PainHint:'e.g. "Our Nexus repository is slow and represents a single point of failure."',
@@ -728,9 +712,8 @@ const LANGS = {
     s3SecHint:'包含 SCA、容器扫描、密钥检测、SAST、DAST 等。例如：「我们使用 Black Duck 和 Snyk。」',
     s3OtherPh:'其他未列出的工具…',
     s3ComplianceLabel:'是否有合规要求？（SOC 2、ISO 27001、PCI DSS、HIPAA 等）', s3CompliancePh:'例如：SOC 2 Type II、ISO 27001',
-    s3PkgLabel:'目前使用哪些软件包类型，以及计划新增哪些？',
-    s3PkgHint:'例如：「Maven、Docker 和 npm。」请选择目前使用的，并在下方另选计划新增的。',
-    s3PkgCurrentLabel:'目前使用中：', s3PkgPlannedLabel:'计划新增（未来）：', s3Next:'下一步：痛点需求',
+    s3PkgLabel:'使用中或计划使用的软件包类型',
+    s3Next:'下一步：痛点需求',
     s4Title:'痛点与目标', s4Subtitle:'您正在尝试解决哪些挑战？',
     s4PainLabel:'贵公司的主要痛点是什么？',
     s4PainHint:'例如：「我们的 Nexus 仓库速度慢，且存在单点故障风险。」',
@@ -785,9 +768,8 @@ const LANGS = {
     s3SecHint:'包含 SCA、容器掃描、機密偵測、SAST、DAST 等。例如：「我們使用 Black Duck 和 Snyk。」',
     s3OtherPh:'其他未列出的工具…',
     s3ComplianceLabel:'是否有合規要求？（SOC 2、ISO 27001、PCI DSS、HIPAA 等）', s3CompliancePh:'例如：SOC 2 Type II、ISO 27001',
-    s3PkgLabel:'目前使用哪些套件類型，以及計劃新增哪些？',
-    s3PkgHint:'例如：「Maven、Docker 和 npm。」請選擇目前使用的，並在下方另選計劃新增的。',
-    s3PkgCurrentLabel:'目前使用中：', s3PkgPlannedLabel:'計劃新增（未來）：', s3Next:'下一步：痛點需求',
+    s3PkgLabel:'使用中或計劃使用的套件類型',
+    s3Next:'下一步：痛點需求',
     s4Title:'痛點與目標', s4Subtitle:'您正在嘗試解決哪些挑戰？',
     s4PainLabel:'貴公司的主要痛點是什麼？',
     s4PainHint:'例如：「我們的 Nexus 倉庫速度慢，且存在單點故障風險。」',
@@ -842,9 +824,8 @@ const LANGS = {
     s3SecHint:'SCA, 컨테이너 스캔, 시크릿 탐지, SAST, DAST 등 포함. 예: "Black Duck과 Snyk을 사용합니다."',
     s3OtherPh:'목록에 없는 다른 도구…',
     s3ComplianceLabel:'컴플라이언스 요구사항이 있나요? (SOC 2, ISO 27001, PCI DSS, HIPAA 등)', s3CompliancePh:'예: SOC 2 Type II, ISO 27001',
-    s3PkgLabel:'현재 사용 중인 패키지 유형과 추가 예정인 패키지 유형은?',
-    s3PkgHint:'예: "Maven, Docker, npm." 현재 사용 중인 것을 선택하고 추가 예정은 아래에서 선택하세요.',
-    s3PkgCurrentLabel:'현재 사용 중:', s3PkgPlannedLabel:'추가 예정 (향후):', s3Next:'다음: Pain Points',
+    s3PkgLabel:'사용 중이거나 사용 예정인 패키지 유형',
+    s3Next:'다음: Pain Points',
     s4Title:'Pain Points 및 목표', s4Subtitle:'어떤 과제를 해결하려 하시나요?',
     s4PainLabel:'주요 Pain Points는 무엇인가요?',
     s4PainHint:'예: "Nexus 리포지토리가 느리고 단일 장애점이 됩니다."',
@@ -1168,7 +1149,7 @@ function collect() {
     },
     packages: {
       currentTypes: getSelectedPills('pkgCurrentPills'),
-      plannedTypes: getSelectedPills('pkgPlannedPills'),
+      plannedTypes: [],
     },
     painPoints: {
       pains: getSelectedPills('painPills'),
@@ -1364,8 +1345,7 @@ Q4 — SECURITY TOOLS
   Other       : ${d.security.toolsOther || '—'}
 
 Q5 — PACKAGE TYPES
-  Current     : ${d.packages.currentTypes.join(', ') || '—'}
-  Planned     : ${d.packages.plannedTypes.join(', ') || '—'}
+  Types       : ${d.packages.currentTypes.join(', ') || '—'}
 
 Q6 — PAIN POINTS & OBJECTIVES
   Pain Points : ${d.painPoints.pains.join(', ') || '—'}
@@ -1467,8 +1447,7 @@ async function downloadPDF() {
     const secRows = [
       ['Security Tools', av(d.security.toolsInUse)],
       ...(d.security.toolsOther ? [['Other Security Tools', x(d.security.toolsOther)]] : []),
-      ['Package Types (Now)', av(d.packages.currentTypes)],
-      ['Package Types (Plan)', av(d.packages.plannedTypes)],
+      ['Package Types', av(d.packages.currentTypes)],
     ];
     const painRows = [
       ['Pain Points', av(d.painPoints.pains)],
