@@ -6,7 +6,6 @@
 <title>JFrog New Customer Questionnaire</title>
 <link rel="icon" href="https://speedmedia2.jfrog.com/08612fe1-9391-4cf3-ac1a-6dd49c36b276/media.jfrog.com/wp-content/uploads/2019/04/20131046/Jfrog16-1.png">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 tailwind.config = {
   theme: {
@@ -113,17 +112,17 @@ tailwind.config = {
       </div>
       <div>
         <label data-i18n="s1IndustryLabel" class="block text-sm font-semibold text-gray-700 mb-1">Industry</label>
-        <select id="industry" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
+        <select id="industry" data-i18n-sel="industry" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
           <option value="">Select…</option>
-          <option>Finance / Banking / Insurance</option>
-          <option>Technology / Software</option>
-          <option>Telecommunications</option>
-          <option>Manufacturing / Semiconductor</option>
-          <option>Retail / E-commerce</option>
-          <option>Healthcare / Pharma</option>
-          <option>Government / Public Sector</option>
-          <option>Media / Entertainment</option>
-          <option>Other</option>
+          <option value="Finance / Banking / Insurance">Finance / Banking / Insurance</option>
+          <option value="Technology / Software">Technology / Software</option>
+          <option value="Telecommunications">Telecommunications</option>
+          <option value="Manufacturing / Semiconductor">Manufacturing / Semiconductor</option>
+          <option value="Retail / E-commerce">Retail / E-commerce</option>
+          <option value="Healthcare / Pharma">Healthcare / Pharma</option>
+          <option value="Government / Public Sector">Government / Public Sector</option>
+          <option value="Media / Entertainment">Media / Entertainment</option>
+          <option value="Other">Other</option>
         </select>
       </div>
       <div>
@@ -471,23 +470,23 @@ tailwind.config = {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
       <div>
         <label data-i18n="s4TimelineLabel" class="block text-sm font-semibold text-gray-700 mb-1">Evaluation / purchase timeline</label>
-        <select id="timeline" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
+        <select id="timeline" data-i18n-sel="timeline" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
           <option value="">Select…</option>
-          <option>Immediate (within 1 month)</option>
-          <option>Short-term (1–3 months)</option>
-          <option>Mid-term (3–6 months)</option>
-          <option>Long-term (6–12 months)</option>
-          <option>Exploring / no timeline yet</option>
+          <option value="Immediate (within 1 month)">Immediate (within 1 month)</option>
+          <option value="Short-term (1–3 months)">Short-term (1–3 months)</option>
+          <option value="Mid-term (3–6 months)">Mid-term (3–6 months)</option>
+          <option value="Long-term (6–12 months)">Long-term (6–12 months)</option>
+          <option value="Exploring / no timeline yet">Exploring / no timeline yet</option>
         </select>
       </div>
       <div>
         <label data-i18n="s4BudgetLabel" class="block text-sm font-semibold text-gray-700 mb-1">Budget range (optional)</label>
-        <select id="budget" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
+        <select id="budget" data-i18n-sel="budget" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white">
           <option value="">Prefer not to say</option>
-          <option>< $50K / year</option>
-          <option>$50K – $200K / year</option>
-          <option>$200K – $500K / year</option>
-          <option>> $500K / year</option>
+          <option value="< $50K / year">&lt; $50K / year</option>
+          <option value="$50K – $200K / year">$50K – $200K / year</option>
+          <option value="$200K – $500K / year">$200K – $500K / year</option>
+          <option value="> $500K / year">&gt; $500K / year</option>
         </select>
       </div>
     </div>
@@ -702,6 +701,11 @@ const LANGS = {
     rateLimitSE:'⚠️ Already submitted. Please wait {wait} before saving again.',
     moreCn:'+ More CN cities', hideCn:'− Hide CN cities',
     moreApac:'+ More APAC', hideApac:'− Hide APAC',
+    opts: {
+      industry: ['Select…','Finance / Banking / Insurance','Technology / Software','Telecommunications','Manufacturing / Semiconductor','Retail / E-commerce','Healthcare / Pharma','Government / Public Sector','Media / Entertainment','Other'],
+      timeline: ['Select…','Immediate (within 1 month)','Short-term (1–3 months)','Mid-term (3–6 months)','Long-term (6–12 months)','Exploring / no timeline yet'],
+      budget: ['Prefer not to say','< $50K / year','$50K – $200K / year','$200K – $500K / year','> $500K / year'],
+    },
   },
   zhCN: {
     appSubtitle:'新客户问卷',
@@ -754,6 +758,11 @@ const LANGS = {
     rateLimitSE:'⚠️ 此电子邮件已提交，请在 {wait} 后再试。',
     moreCn:'+ 更多中国城市', hideCn:'− 隐藏中国城市',
     moreApac:'+ 更多亚太城市', hideApac:'− 隐藏亚太城市',
+    opts: {
+      industry: ['请选择…','金融 / 银行 / 保险','科技 / 软件','电信','制造业 / 半导体','零售 / 电商','医疗 / 制药','政府 / 公共事业','媒体 / 娱乐','其他'],
+      timeline: ['请选择…','立即（1 个月内）','短期（1–3 个月）','中期（3–6 个月）','长期（6–12 个月）','探索阶段 / 暂无时间线'],
+      budget: ['暂不透露','< $50K / 年','$50K – $200K / 年','$200K – $500K / 年','> $500K / 年'],
+    },
   },
   zh: {
     appSubtitle:'新客戶問卷',
@@ -806,6 +815,11 @@ const LANGS = {
     rateLimitSE:'⚠️ 此電子郵件已提交，請在 {wait} 後再試。',
     moreCn:'+ 更多中國城市', hideCn:'− 隱藏中國城市',
     moreApac:'+ 更多亞太城市', hideApac:'− 隱藏亞太城市',
+    opts: {
+      industry: ['請選擇…','金融 / 銀行 / 保險','科技 / 軟件','電信','製造業 / 半導體','零售 / 電商','醫療 / 製藥','政府 / 公共事業','媒體 / 娛樂','其他'],
+      timeline: ['請選擇…','立即（1 個月內）','短期（1–3 個月）','中期（3–6 個月）','長期（6–12 個月）','探索階段 / 暫無時程'],
+      budget: ['暫不透露','< $50K / 年','$50K – $200K / 年','$200K – $500K / 年','> $500K / 年'],
+    },
   },
   ko: {
     appSubtitle:'신규 고객 설문',
@@ -858,6 +872,11 @@ const LANGS = {
     rateLimitSE:'⚠️ 이미 제출되었습니다. {wait} 후에 저장해 주세요.',
     moreCn:'+ 중국 도시 더보기', hideCn:'− 중국 도시 숨기기',
     moreApac:'+ 아시아태평양 더보기', hideApac:'− 아시아태평양 숨기기',
+    opts: {
+      industry: ['선택…','금융 / 은행 / 보험','기술 / 소프트웨어','통신','제조 / 반도체','소매 / 이커머스','의료 / 제약','정부 / 공공 부문','미디어 / 엔터테인먼트','기타'],
+      timeline: ['선택…','즉시 (1개월 이내)','단기 (1–3개월)','중기 (3–6개월)','장기 (6–12개월)','탐색 중 / 미정'],
+      budget: ['비공개','< $50K / 년','$50K – $200K / 년','$200K – $500K / 년','> $500K / 년'],
+    },
   },
 };
 
@@ -873,6 +892,13 @@ function setLang(lang) {
   document.getElementById('langDropdown')?.classList.add('hidden');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-sel]').forEach(sel => {
+    const key = sel.dataset.i18nSel;
+    const opts = LANGS[currentLang]?.opts?.[key] || LANGS.en.opts[key] || [];
+    const curVal = sel.value;
+    sel.querySelectorAll('option').forEach((opt, i) => { if (opts[i] != null) opt.textContent = opts[i]; });
+    sel.value = curVal;
+  });
   renderStepNav();
 }
 
@@ -1396,160 +1422,109 @@ function sendEmail() {
 
 // ── Download PDF (questionnaire data record) ──────────────────────────────────
 function downloadPDF() {
-  const btn = document.getElementById('downloadPdfBtn');
-  const origContent = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> <span>Generating…</span>`;
+  const d = data;
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const arr = a => (a && a.length) ? a.map(esc).join(', ') : '—';
+  const val = v => esc(v) || '—';
 
-  try {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-    const W = doc.internal.pageSize.getWidth();
-    const H = doc.internal.pageSize.getHeight();
-    const ml = 40, mr = 40;
-    const cW = W - ml - mr;
-    const d = data;
+  const recs  = d.recommendations || [];
+  const score = recs.length ? Math.round(recs.reduce((a,r) => a + r.s, 0) / recs.length) : null;
+  const hi    = recs.filter(r => r.priority === 'high').map(r => esc(r.product)).join(', ') || '—';
+  const med   = recs.filter(r => r.priority === 'medium').map(r => esc(r.product)).join(', ') || '—';
+  const dateStr = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
 
-    // Strip emojis/non-printable; keep Latin, CJK placeholder shown as-is via jsPDF best effort
-    const safe  = s => (s || '').replace(/[\u{1F000}-\u{1FFFF}]/gu, '').trim();
-    const arr   = a => (a && a.length) ? a.join(', ') : '—';
-    const val   = v => safe(v) || '—';
+  const html = `<!DOCTYPE html>
+<html lang="${LANG_HTML[currentLang]||'en'}">
+<head>
+<meta charset="UTF-8">
+<title>JFrog Questionnaire</title>
+<style>
+@page{size:A4;margin:12mm 14mm}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;font-size:9.5pt;color:#1a1a2e;background:#fff}
+.hdr{background:#1a1a2e;color:#fff;padding:10px 14px;border-radius:4px;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.hdr h1{font-size:13pt;font-weight:700;color:#fff}
+.hdr .sub{font-size:8pt;color:#a5aabe;margin-top:3px}
+.hdr .dt{font-size:8pt;color:#40be46;white-space:nowrap;padding-left:12px}
+.sec{margin-bottom:12px}
+.sec-ttl{background:#f1f3f9;border-left:3px solid #40be46;padding:5px 8px 5px 10px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1a1a2e}
+table{width:100%;border-collapse:collapse}
+td{padding:5px 8px;font-size:9pt;border-bottom:1px solid #e8eaf0;vertical-align:top}
+td.l{color:#787e8e;width:38%;white-space:nowrap;padding-right:10px}
+.score{background:#1a1a2e;border-radius:6px;padding:12px 14px;color:#fff;margin-top:12px;display:flex;gap:16px;align-items:center}
+.score-n{font-size:30pt;font-weight:700;color:#40be46;min-width:56px;text-align:center;line-height:1}
+.score-m{flex:1;font-size:8.5pt}
+.score-m .ttl{color:#afb4c8;font-weight:700;font-size:9pt;margin-bottom:4px}
+.row{margin-top:4px}
+.row .l{color:#a0a5b9;display:inline}
+.row .v{color:#fff;font-weight:700}
+.ft{margin-top:16px;text-align:center;font-size:7.5pt;color:#b4b9c3}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div><h1>JFrog New Customer Questionnaire</h1>
+  <div class="sub">${val(d.company.name)} &middot; ${val(d.company.contactEmail)}</div></div>
+  <div class="dt">${dateStr}</div>
+</div>
+<div class="sec">
+  <div class="sec-ttl">Company Information</div>
+  <table>
+    <tr><td class="l">Company Name</td><td>${val(d.company.name)}</td></tr>
+    <tr><td class="l">Industry</td><td>${val(d.company.industry)}</td></tr>
+    <tr><td class="l">Contact Name</td><td>${val(d.company.contactName)}</td></tr>
+    <tr><td class="l">Contact Email</td><td>${val(d.company.contactEmail)}</td></tr>
+  </table>
+</div>
+<div class="sec">
+  <div class="sec-ttl">Infrastructure</div>
+  <table>
+    <tr><td class="l">Developer Count</td><td>${val(d.infrastructure.devCount)}</td></tr>
+    ${d.infrastructure.devCountNote?`<tr><td class="l">Count Details</td><td>${esc(d.infrastructure.devCountNote)}</td></tr>`:''}
+    <tr><td class="l">Data Center Sites</td><td>${arr(d.infrastructure.dataCenterSites)}</td></tr>
+    <tr><td class="l">Deployment Type</td><td>${val(d.infrastructure.deploymentType)}</td></tr>
+    <tr><td class="l">Current Storage</td><td>${val(d.infrastructure.storageCurrentGB)}</td></tr>
+    <tr><td class="l">Existing Repo Tools</td><td>${d.infrastructure.existingTools?.length?arr(d.infrastructure.existingTools):'None / First deployment'}</td></tr>
+  </table>
+</div>
+<div class="sec">
+  <div class="sec-ttl">Security &amp; Package Types</div>
+  <table>
+    <tr><td class="l">Security Tools</td><td>${arr(d.security.toolsInUse)}</td></tr>
+    ${d.security.toolsOther?`<tr><td class="l">Other Security Tools</td><td>${esc(d.security.toolsOther)}</td></tr>`:''}
+    <tr><td class="l">Compliance</td><td>${val(d.security.compliance)}</td></tr>
+    <tr><td class="l">Package Types (Now)</td><td>${arr(d.packages.currentTypes)}</td></tr>
+    <tr><td class="l">Package Types (Plan)</td><td>${arr(d.packages.plannedTypes)}</td></tr>
+  </table>
+</div>
+<div class="sec">
+  <div class="sec-ttl">Pain Points &amp; Objectives</div>
+  <table>
+    <tr><td class="l">Pain Points</td><td>${arr(d.painPoints.pains)}</td></tr>
+    <tr><td class="l">Objectives</td><td>${arr(d.painPoints.objectives)}</td></tr>
+    <tr><td class="l">Timeline</td><td>${val(d.painPoints.timeline)}</td></tr>
+    <tr><td class="l">Budget Range</td><td>${val(d.painPoints.budget)}</td></tr>
+    ${d.painPoints.freeText?`<tr><td class="l">Additional Notes</td><td>${esc(d.painPoints.freeText)}</td></tr>`:''}
+  </table>
+</div>
+${score!==null?`
+<div class="score">
+  <div class="score-n">${score}</div>
+  <div class="score-m">
+    <div class="ttl">JFrog FIT SCORE</div>
+    <div class="row"><span class="l">High Priority: </span><span class="v">${hi}</span></div>
+    <div class="row"><span class="l">Consider: </span><span class="v">${med}</span></div>
+  </div>
+</div>`:''}
+<div class="ft">JFrog New Customer Questionnaire &middot; Confidential</div>
+<script>window.onload=function(){setTimeout(function(){window.print()},200)}<\/script>
+</body></html>`;
 
-    // ── Header ───────────────────────────────────────────────────────────────
-    doc.setFillColor(26, 26, 46);
-    doc.rect(0, 0, W, 54, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(255, 255, 255);
-    doc.text('JFrog New Customer Questionnaire', ml, 28);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(64, 190, 70);
-    doc.text(new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }), W - mr, 28, { align:'right' });
-    doc.setTextColor(165, 170, 190);
-    const subtitle = [safe(d.company.name), safe(d.company.contactEmail)].filter(Boolean).join('  \xB7  ');
-    doc.text(subtitle, ml, 44);
-
-    let y = 72;
-
-    // ── Section / field helpers ───────────────────────────────────────────────
-    function section(title) {
-      if (y > H - 100) { doc.addPage(); y = 40; }
-      doc.setFillColor(241, 243, 249);
-      doc.rect(ml, y, cW, 21, 'F');
-      doc.setFillColor(64, 190, 70);
-      doc.rect(ml, y, 3, 21, 'F');
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(26, 26, 46);
-      doc.text(title, ml + 10, y + 14);
-      y += 27;
-    }
-
-    const LABEL_W = 145;
-    function field(label, value) {
-      const lines = doc.splitTextToSize(value, cW - LABEL_W - 8);
-      const rowH  = Math.max(18, lines.length * 12 + 6);
-      if (y + rowH > H - 46) { doc.addPage(); y = 40; }
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(120, 126, 142);
-      doc.text(label, ml + 6, y + 12);
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(26, 26, 46);
-      doc.text(lines, ml + LABEL_W, y + 12);
-      doc.setDrawColor(232, 234, 240);
-      doc.line(ml, y + rowH, ml + cW, y + rowH);
-      y += rowH + 1;
-    }
-
-    // ── Company Information ───────────────────────────────────────────────────
-    section('COMPANY INFORMATION');
-    field('Company Name',    val(d.company.name));
-    field('Industry',        val(d.company.industry));
-    field('Contact Name',    val(d.company.contactName));
-    field('Contact Email',   val(d.company.contactEmail));
-
-    y += 8;
-
-    // ── Infrastructure ────────────────────────────────────────────────────────
-    section('INFRASTRUCTURE');
-    field('Developer Count',   val(d.infrastructure.devCount));
-    if (d.infrastructure.devCountNote)
-      field('Count Details',   safe(d.infrastructure.devCountNote));
-    field('Data Center Sites', arr(d.infrastructure.dataCenterSites));
-    field('Deployment Type',   val(d.infrastructure.deploymentType));
-    field('Current Storage',   val(d.infrastructure.storageCurrentGB));
-    field('Existing Repo Tools', d.infrastructure.existingTools?.length
-      ? arr(d.infrastructure.existingTools) : 'None / First deployment');
-
-    y += 8;
-
-    // ── Security & Packages ───────────────────────────────────────────────────
-    section('SECURITY & PACKAGE TYPES');
-    field('Security Tools',       arr(d.security.toolsInUse));
-    if (d.security.toolsOther)
-      field('Other Security Tools', safe(d.security.toolsOther));
-    field('Compliance',           val(d.security.compliance));
-    field('Package Types (Now)',  arr(d.packages.currentTypes));
-    field('Package Types (Plan)', arr(d.packages.plannedTypes));
-
-    y += 8;
-
-    // ── Pain Points & Objectives ──────────────────────────────────────────────
-    section('PAIN POINTS & OBJECTIVES');
-    field('Pain Points',   arr(d.painPoints.pains));
-    field('Objectives',    arr(d.painPoints.objectives));
-    field('Timeline',      val(d.painPoints.timeline));
-    field('Budget Range',  val(d.painPoints.budget));
-    if (d.painPoints.freeText)
-      field('Additional Notes', safe(d.painPoints.freeText));
-
-    y += 14;
-
-    // ── Fit Score Summary (compact) ───────────────────────────────────────────
-    const recs = d.recommendations || [];
-    if (recs.length) {
-      const score = Math.round(recs.reduce((a, r) => a + r.s, 0) / recs.length);
-      const hi  = recs.filter(r => r.priority === 'high').map(r => r.product).join(', ') || '—';
-      const med = recs.filter(r => r.priority === 'medium').map(r => r.product).join(', ') || '—';
-
-      if (y + 76 > H - 46) { doc.addPage(); y = 40; }
-
-      doc.setFillColor(26, 26, 46);
-      doc.roundedRect(ml, y, cW, 74, 5, 5, 'F');
-
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(175, 180, 200);
-      doc.text('JFrog FIT SCORE', ml + 12, y + 18);
-
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(30); doc.setTextColor(64, 190, 70);
-      doc.text(String(score), W - mr - 12, y + 42, { align:'right' });
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(130, 135, 155);
-      doc.text('/ 100', W - mr - 12, y + 54, { align:'right' });
-
-      const hiLines  = doc.splitTextToSize(hi,  cW - 145);
-      const medLines = doc.splitTextToSize(med, cW - 145);
-
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(160, 165, 185);
-      doc.text('High Priority:', ml + 12, y + 36);
-      doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 255, 255);
-      doc.text(hiLines[0], ml + 105, y + 36);
-
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(160, 165, 185);
-      doc.text('Consider:', ml + 12, y + 52);
-      doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 255, 255);
-      doc.text(medLines[0], ml + 105, y + 52);
-    }
-
-    // ── Footer ────────────────────────────────────────────────────────────────
-    const totalPages = doc.getNumberOfPages();
-    for (let p = 1; p <= totalPages; p++) {
-      doc.setPage(p);
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(180, 185, 195);
-      doc.text('JFrog New Customer Questionnaire  \xB7  Confidential', W / 2, H - 20, { align:'center' });
-      if (totalPages > 1) doc.text(`${p} / ${totalPages}`, W - mr, H - 20, { align:'right' });
-    }
-
-    const slug = (d.company.name || 'unknown').replace(/[\s\/\\]/g, '-');
-    doc.save(`jfrog-questionnaire-${slug}-${new Date().toISOString().slice(0, 10)}.pdf`);
-
-  } catch(e) {
-    console.error('PDF error:', e);
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = origContent;
+  const w = window.open('', '_blank');
+  if (!w) { alert('Please allow popups for this page, then click Download PDF again.'); return; }
+  w.document.write(html);
+  w.document.close();
 }
 
 // ── Google Sheets Integration ─────────────────────────────────────────────────
