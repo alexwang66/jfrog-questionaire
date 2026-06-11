@@ -522,10 +522,6 @@ tailwind.config = {
         <div class="font-bold text-lg" id="rMed">0</div>
         <div data-i18n="r5Consider" class="text-xs text-gray-300">consider</div>
       </div>
-      <div class="bg-white/10 rounded-xl p-3 text-center">
-        <div class="font-bold text-lg" id="rLow">0</div>
-        <div data-i18n="r5Informational" class="text-xs text-gray-300">informational</div>
-      </div>
     </div>
   </div>
 
@@ -667,9 +663,9 @@ const LANGS = {
     s4FreeTextPh:'Describe your situation, migration source, special requirements, or anything not covered above…',
     s4Submit:'Submit',
     r5Title:'JFrog Recommendations', r5Subtitle:'Based on your responses, here is a tailored JFrog solution overview.',
-    r5FitScore:'fit score', r5HighPriority:'high priority', r5Consider:'consider', r5Informational:'informational',
+    r5FitScore:'fit score', r5HighPriority:'high priority', r5Consider:'consider',
     r5CopyBtn:'Copy Summary', r5DownloadBtn:'Download PDF', r5NewBtn:'New',
-    navBack:'Back', rcHigh:'High Priority', rcMed:'Consider', rcLow:'Informational',
+    navBack:'Back', rcHigh:'High Priority', rcMed:'Consider',
     rcNextStep:'Suggested next step:',
     errCompanyRequired:'Company name is required.', errEmailRequired:'Contact email is required.',
     errEmailFree:'Please use your company email address (not a personal/free email).',
@@ -723,9 +719,9 @@ const LANGS = {
     s4FreeTextPh:'请描述您的现状、迁移来源、特殊需求，或以上未覆盖的任何信息…',
     s4Submit:'提交问卷',
     r5Title:'JFrog 解决方案推荐', r5Subtitle:'根据您的填答，以下是针对贵公司量身定制的 JFrog 解决方案概览。',
-    r5FitScore:'契合分数', r5HighPriority:'高优先', r5Consider:'建议考虑', r5Informational:'参考信息',
+    r5FitScore:'契合分数', r5HighPriority:'高优先', r5Consider:'建议考虑',
     r5CopyBtn:'复制摘要', r5DownloadBtn:'下载 PDF', r5NewBtn:'重新填写',
-    navBack:'上一步', rcHigh:'高优先', rcMed:'建议考虑', rcLow:'参考信息',
+    navBack:'上一步', rcHigh:'高优先', rcMed:'建议考虑',
     rcNextStep:'建议行动：',
     errCompanyRequired:'请填写公司名称。', errEmailRequired:'请填写工作电子邮件。',
     errEmailFree:'请使用公司电子邮件（不接受个人免费邮箱）。',
@@ -779,9 +775,9 @@ const LANGS = {
     s4FreeTextPh:'請描述您的現況、遷移來源、特殊需求，或以上未洵蓋的任何資訊…',
     s4Submit:'提交問卷',
     r5Title:'JFrog 解決方案推薦', r5Subtitle:'根據您的填答，以下是針對貴公司量身打裁的 JFrog 解決方案概覽。',
-    r5FitScore:'契合分數', r5HighPriority:'高優先', r5Consider:'建議考慮', r5Informational:'參考資訊',
+    r5FitScore:'契合分數', r5HighPriority:'高優先', r5Consider:'建議考慮',
     r5CopyBtn:'複製摘要', r5DownloadBtn:'下載 PDF', r5NewBtn:'重新填寫',
-    navBack:'上一步', rcHigh:'高優先', rcMed:'建議考慮', rcLow:'參考資訊',
+    navBack:'上一步', rcHigh:'高優先', rcMed:'建議考慮',
     rcNextStep:'建議行動：',
     errCompanyRequired:'請填寫公司名稱。', errEmailRequired:'請填寫工作電子郵件。',
     errEmailFree:'請使用公司電子郵件（不接受個人免費信算）。',
@@ -835,9 +831,9 @@ const LANGS = {
     s4FreeTextPh:'현재 상황, 마이그레이션 출처, 특별 요구사항 또는 위에서 다루지 않은 내용을 설명해 주세요…',
     s4Submit:'설문 제출',
     r5Title:'JFrog 솔루션 추천', r5Subtitle:'응답 내용을 바탕으로 맞춤형 JFrog 솔루션 개요를 제공합니다.',
-    r5FitScore:'적합도 점수', r5HighPriority:'높은 우선순위', r5Consider:'고려', r5Informational:'참고',
+    r5FitScore:'적합도 점수', r5HighPriority:'높은 우선순위', r5Consider:'고려',
     r5CopyBtn:'요약 복사', r5DownloadBtn:'PDF 다운로드', r5NewBtn:'처음부터',
-    navBack:'이전', rcHigh:'높은 우선순위', rcMed:'고려', rcLow:'참고',
+    navBack:'이전', rcHigh:'높은 우선순위', rcMed:'고려',
     rcNextStep:'권장 다음 단계:',
     errCompanyRequired:'회사명을 입력해 주세요.', errEmailRequired:'회사 이메일을 입력해 주세요.',
     errEmailFree:'회사 이메일 주소를 사용해 주세요 (개인/무료 이메일 불가).',
@@ -1275,18 +1271,16 @@ function generateResults() {
 
   const high = recs.filter(r => r.priority==='high').length;
   const med  = recs.filter(r => r.priority==='medium').length;
-  const low  = recs.filter(r => r.priority==='low').length;
   document.getElementById('rHigh').textContent = high;
   document.getElementById('rMed').textContent = med;
-  document.getElementById('rLow').textContent = low;
   document.getElementById('rScore').textContent = Math.round(recs.reduce((a,r)=>a+r.s,0)/Math.max(recs.length,1));
 
   const list = document.getElementById('recList');
   list.innerHTML = '';
-  recs.forEach(r => {
-    const pc = r.priority==='high' ? 'text-red-600 bg-red-50' : r.priority==='medium' ? 'text-amber-600 bg-amber-50' : 'text-green-600 bg-green-50';
-    const pl = r.priority==='high' ? t('rcHigh') : r.priority==='medium' ? t('rcMed') : t('rcLow');
-    const bc = r.priority==='high' ? 'bg-red-400' : r.priority==='medium' ? 'bg-amber-400' : 'bg-green-400';
+  recs.filter(r => r.priority !== 'low').forEach(r => {
+    const pc = r.priority==='high' ? 'text-red-600 bg-red-50' : 'text-amber-600 bg-amber-50';
+    const pl = r.priority==='high' ? t('rcHigh') : t('rcMed');
+    const bc = r.priority==='high' ? 'bg-red-400' : 'bg-amber-400';
     const card = document.createElement('div');
     card.className = `bg-white rounded-2xl shadow-sm border border-gray-100 p-5 result-border-${r.priority} card-hover`;
     card.innerHTML = `
