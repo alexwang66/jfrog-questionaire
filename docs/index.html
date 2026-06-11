@@ -418,33 +418,33 @@ tailwind.config = {
     <div>
       <label data-i18n="s4PainLabel" class="block text-sm font-semibold text-gray-800 mb-0.5">What are your primary pain points?</label>
       <p data-i18n="s4PainHint" class="text-xs text-gray-400 mb-3">e.g. "Our Nexus repository is slow and represents a single point of failure."</p>
-      <div class="flex flex-wrap gap-2 mb-3" id="painPills">
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Performance / slow build downloads</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Single point of failure / HA</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Security vulnerabilities in dependencies</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">No visibility into OSS licenses</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Compliance audit preparation</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Slow artifact distribution across regions</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Too many disparate tools</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Migrating from Nexus / other tool</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Lack of developer governance</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Multi-site / multi-region sync</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">ML / AI model management</span>
+      <div class="flex flex-wrap gap-2 mb-3" id="painPills" data-i18n-pills="pain">
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Performance / slow build downloads">Performance / slow build downloads</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Single point of failure / HA">Single point of failure / HA</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Security vulnerabilities in dependencies">Security vulnerabilities in dependencies</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="No visibility into OSS licenses">No visibility into OSS licenses</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Compliance audit preparation">Compliance audit preparation</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Slow artifact distribution across regions">Slow artifact distribution across regions</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Too many disparate tools">Too many disparate tools</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Migrating from Nexus / other tool">Migrating from Nexus / other tool</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Lack of developer governance">Lack of developer governance</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Multi-site / multi-region sync">Multi-site / multi-region sync</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="ML / AI model management">ML / AI model management</span>
       </div>
     </div>
 
     <!-- Q: Objectives / Timeline -->
     <div class="pt-2 border-t border-gray-100">
       <label data-i18n="s4ObjLabel" class="block text-sm font-semibold text-gray-800 mb-3">Primary objectives for adopting JFrog</label>
-      <div class="flex flex-wrap gap-2 mb-4" id="objPills">
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Unified artifact management</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Software supply chain security</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Faster CI/CD pipelines</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Developer self-service</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Compliance & audit readiness</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">Cost reduction (consolidate tools)</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">High availability & disaster recovery</span>
-        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)">ML/AI artifact governance</span>
+      <div class="flex flex-wrap gap-2 mb-4" id="objPills" data-i18n-pills="obj">
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Unified artifact management">Unified artifact management</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Software supply chain security">Software supply chain security</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Faster CI/CD pipelines">Faster CI/CD pipelines</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Developer self-service">Developer self-service</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Compliance & audit readiness">Compliance &amp; audit readiness</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="Cost reduction (consolidate tools)">Cost reduction (consolidate tools)</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="High availability & disaster recovery">High availability &amp; disaster recovery</span>
+        <span class="pill border border-gray-300 text-gray-600 text-xs px-3 py-1.5 rounded-full" onclick="togglePill(this)" data-val="ML/AI artifact governance">ML/AI artifact governance</span>
       </div>
     </div>
 
@@ -683,6 +683,10 @@ const LANGS = {
       timeline: ['Select…','Immediate (within 1 month)','Short-term (1–3 months)','Mid-term (3–6 months)','Long-term (6–12 months)','Exploring / no timeline yet'],
       budget: ['Prefer not to say','< $50K / year','$50K – $200K / year','$200K – $500K / year','> $500K / year'],
     },
+    pills: {
+      pain: ['Performance / slow build downloads','Single point of failure / HA','Security vulnerabilities in dependencies','No visibility into OSS licenses','Compliance audit preparation','Slow artifact distribution across regions','Too many disparate tools','Migrating from Nexus / other tool','Lack of developer governance','Multi-site / multi-region sync','ML / AI model management'],
+      obj:  ['Unified artifact management','Software supply chain security','Faster CI/CD pipelines','Developer self-service','Compliance & audit readiness','Cost reduction (consolidate tools)','High availability & disaster recovery','ML/AI artifact governance'],
+    },
   },
   zhCN: {
     appSubtitle:'新客户问卷',
@@ -738,6 +742,10 @@ const LANGS = {
       industry: ['请选择…','金融 / 银行 / 保险','科技 / 软件','电信','制造业 / 半导体','零售 / 电商','医疗 / 制药','政府 / 公共事业','媒体 / 娱乐','其他'],
       timeline: ['请选择…','立即（1 个月内）','短期（1–3 个月）','中期（3–6 个月）','长期（6–12 个月）','探索阶段 / 暂无时间线'],
       budget: ['暂不透露','< $50K / 年','$50K – $200K / 年','$200K – $500K / 年','> $500K / 年'],
+    },
+    pills: {
+      pain: ['性能差 / 构建下载慢','单点故障 / 高可用','依赖项存在安全漏洞','无法追踪开源许可证','合规审计准备','跨地区制品分发慢','工具过于分散','从 Nexus / 其他工具迁移','缺乏开发者治理','多站点 / 多地区同步','ML / AI 模型管理'],
+      obj:  ['统一制品管理','软件供应链安全','加速 CI/CD 流水线','开发者自助服务','合规与审计就绪','降低成本（整合工具）','高可用与灾难恢复','ML/AI 制品治理'],
     },
   },
   zh: {
@@ -795,6 +803,10 @@ const LANGS = {
       timeline: ['請選擇…','立即（1 個月內）','短期（1–3 個月）','中期（3–6 個月）','長期（6–12 個月）','探索階段 / 暫無時程'],
       budget: ['暫不透露','< $50K / 年','$50K – $200K / 年','$200K – $500K / 年','> $500K / 年'],
     },
+    pills: {
+      pain: ['性能差 / 建置下載慢','單點故障 / 高可用','相依套件存在安全漏洞','無法追蹤開源授權','合規審計準備','跨地區製品分發慢','工具過於分散','從 Nexus / 其他工具遷移','缺乏開發者治理','多站點 / 多地區同步','ML / AI 模型管理'],
+      obj:  ['統一製品管理','軟體供應鏈安全','加速 CI/CD 流水線','開發者自助服務','合規與審計就緒','降低成本（整合工具）','高可用與災難恢復','ML/AI 製品治理'],
+    },
   },
   ko: {
     appSubtitle:'신규 고객 설문',
@@ -851,6 +863,10 @@ const LANGS = {
       timeline: ['선택…','즉시 (1개월 이내)','단기 (1–3개월)','중기 (3–6개월)','장기 (6–12개월)','탐색 중 / 미정'],
       budget: ['비공개','< $50K / 년','$50K – $200K / 년','$200K – $500K / 년','> $500K / 년'],
     },
+    pills: {
+      pain: ['성능 / 빌드 다운로드 느림','단일 장애점 / HA','의존성 보안 취약점','OSS 라이선스 가시성 부족','컴플라이언스 감사 준비','리전 간 배포 느림','분산된 도구','Nexus / 다른 도구 마이그레이션','개발자 거버넌스 부족','멀티사이트 / 멀티리전 동기화','ML / AI 모델 관리'],
+      obj:  ['통합 아티팩트 관리','소프트웨어 공급망 보안','빠른 CI/CD 파이프라인','개발자 셀프 서비스','컴플라이언스 및 감사 준비','비용 절감 (도구 통합)','고가용성 및 재해 복구','ML/AI 아티팩트 거버넌스'],
+    },
   },
 };
 
@@ -872,6 +888,11 @@ function setLang(lang) {
     const curVal = sel.value;
     sel.querySelectorAll('option').forEach((opt, i) => { if (opts[i] != null) opt.textContent = opts[i]; });
     sel.value = curVal;
+  });
+  document.querySelectorAll('[data-i18n-pills]').forEach(container => {
+    const key = container.dataset.i18nPills;
+    const labels = LANGS[currentLang]?.pills?.[key] || LANGS.en.pills[key] || [];
+    container.querySelectorAll('.pill').forEach((pill, i) => { if (labels[i] != null) pill.textContent = labels[i]; });
   });
   renderStepNav();
 }
@@ -1004,7 +1025,7 @@ function renderStepNav() {
 function togglePill(el) { el.classList.toggle('on'); }
 function getSelectedPills(id) {
   const c = document.getElementById(id);
-  return c ? [...c.querySelectorAll('.pill.on')].map(p => p.textContent.trim()) : [];
+  return c ? [...c.querySelectorAll('.pill.on')].map(p => p.dataset.val || p.textContent.trim()) : [];
 }
 
 // ── Data Center Tag Input ─────────────────────────────────────────────────────
