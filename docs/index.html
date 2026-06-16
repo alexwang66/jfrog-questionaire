@@ -622,7 +622,7 @@ const FORM_OPEN_TIME = Date.now();
 const visitedSteps = new Set([1]);
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
-let currentLang = localStorage.getItem('jfrog_lang') || 'en';
+let currentLang = 'en';
 
 const LANG_LABELS = { en:'EN', zhCN:'简中', zh:'繁中', ko:'한국어' };
 const LANG_HTML   = { en:'en', zhCN:'zh-CN', zh:'zh-TW', ko:'ko' };
@@ -875,7 +875,6 @@ function tFmt(key, vars) { return t(key).replace(/\{(\w+)\}/g, (_, k) => vars[k]
 
 function setLang(lang) {
   currentLang = lang;
-  localStorage.setItem('jfrog_lang', lang);
   document.getElementById('htmlRoot').lang = LANG_HTML[lang] || 'en';
   const cur = document.getElementById('langCurrent');
   if (cur) cur.textContent = LANG_LABELS[lang] || 'EN';
